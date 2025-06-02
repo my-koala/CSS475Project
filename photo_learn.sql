@@ -1,10 +1,10 @@
-CREATE TABLE Users (
-  user_id INT PRIMARY KEY,
+-- Table Structures
+
+DROP TABLE IF EXISTS Users;
+CREATE TABLE IF NOT EXISTS Users (
+  user_id INT NOT NULL,
   username VARCHAR(40),
   pass_hash VARCHAR(64),
-  sub_plan BOOLEAN NOT NULL CHECK (sub_plan IN (0, 1)),
-  sub_start DATE,
-  sub_end DATE,
   user_type VARCHAR(10) CHECK (user_type IN ('free', 'premium', 'admin', 'marketing')),
   birthdate DATE,
   email VARCHAR(320), 
@@ -13,65 +13,77 @@ CREATE TABLE Users (
   private_acc BOOLEAN NOT NULL CHECK (private_acc IN (0, 1)),
   last_ip VARCHAR(16),
   display_name VARCHAR(40),
-  profile_photo_id INT,
-  FOREIGN KEY (profile_photo_id) REFERENCES Photos(photo_id)
+  profile_photo_id INT
 );
 
-CREATE TABLE Posts (
-  post_id INT PRIMARY KEY,
-  time_stamp DATE,
-  click_through_rate DECIMAL(3, 2),
-  impressions INT,
-  post_text VARCHAR(30000),
+DROP TABLE IF EXISTS Subscriptions;
+CREATE TABLE IF NOT EXISTS Subscriptions (
+  user_id INT NOT NULL,
+  plan BOOLEAN NOT NULL CHECK (plan IN (0, 1)),
+  date_start DATE,
+  date_end DATE
+);
+
+DROP TABLE IF EXISTS Posts;
+CREATE TABLE IF NOT EXISTS Posts (
+  post_id INT NOT NULL,
   user_id INT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  time_stamp DATE,
+  ctr DECIMAL(3, 2),
+  post_text VARCHAR(10000)
 );
 
-CREATE TABLE Photos (
-  photo_id INT PRIMARY KEY,
-  device_type VARCHAR(50),
-  manufacturer VARCHAR(50),
-  model VARCHAR(50),
+DROP TABLE IF EXISTS Photos;
+CREATE TABLE IF NOT EXISTS Photos (
+  photo_id INT NOT NULL,
+  user_id INT,
+  resolution_x INT,
+  resolution_y INT,
+  camera_model VARCHAR(50),
   image_format VARCHAR(50),
   image_description VARCHAR(256),
   aperture VARCHAR(6),
   shutter_speed VARCHAR(10),
   iso INT,
   focal_length VARCHAR(6),
-  geolocation VARCHAR(400),
-  user_id INT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  geolocation VARCHAR(400)
 );
 
-CREATE TABLE Bans (
-  ban_id INT PRIMARY KEY,
-  last_ip VARCHAR(16),
+DROP TABLE IF EXISTS CameraModels;
+CREATE TABLE IF NOT EXISTS CameraModels (
+  camera_model VARCHAR(64) NOT NULL,
+  manufacturer VARCHAR(64),
+  device VARCHAR(64)
+);
+
+DROP TABLE IF EXISTS Bans;
+CREATE TABLE IF NOT EXISTS Bans (
+  ban_id INT NOT NULL DEFAULT 0,
   reason VARCHAR(256),
-  ban_start DATE,
-  ban_end DATE,
   user_id INT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  ban_start DATE,
+  ban_end DATE
 );
 
-CREATE TABLE Collections (
-  collection_id INT PRIMARY KEY,
+DROP TABLE IF EXISTS Collections;
+CREATE TABLE IF NOT EXISTS Collections (
+  collection_id INT NOT NULL DEFAULT 0,
   title VARCHAR(30),
   collection_description VARCHAR(512),
-  user_id INT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  user_id INT
 );
 
-CREATE TABLE Tags (
-  tag_name VARCHAR(30) PRIMARY KEY
+DROP TABLE IF EXISTS Tags;
+CREATE TABLE IF NOT EXISTS Tags (
+  tag_name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE Campaigns (
-  campaign_id INT PRIMARY KEY,
+  campaign_id INT NOT NULL,
   title VARCHAR(30),
   campaign_start DATE,
   campaign_end DATE,
-  user_id INT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  user_id INT
 );
 
 CREATE TABLE Comments (
@@ -79,90 +91,149 @@ CREATE TABLE Comments (
   post_id INT NOT NULL,
   comment_timestamp DATE,
   comment_text VARCHAR(1024),
-  user_id INT,
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  PRIMARY KEY (comment_id, post_id)
+  user_id INT
 );
 
 CREATE TABLE Thumbnails (
-  resolution VARCHAR(16) NOT NULL,
+  resolution_x INT NOT NULL,
+  resolution_y INT NOT NULL,
   photo_id INT NOT NULL,
-  image_path VARCHAR(256),
-  image_format VARCHAR(50),
-  FOREIGN KEY (photo_id) REFERENCES Photos(photo_id),
-  PRIMARY KEY (resolution, photo_id)
+  image_path VARCHAR(1024),
+  image_format VARCHAR(64)
 );
 
 CREATE TABLE PostTags (
   post_id INT NOT NULL,
-  tag_name VARCHAR(30) NOT NULL,
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  FOREIGN KEY (tag_name) REFERENCES Tags(tag_name),
-  PRIMARY KEY (post_id, tag_name)
+  tag_name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE PostLikes (
   post_id INT NOT NULL,
   user_id INT NOT NULL,
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  PRIMARY KEY (post_id, user_id)
+  like_timestamp DATETIME
 );
 
 CREATE TABLE CommentLikes (
   comment_id INT NOT NULL,
   user_id INT NOT NULL,
-  FOREIGN KEY (comment_id) REFERENCES Posts(comment_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  PRIMARY KEY (comment_id, user_id)
+  like_timestamp DATETIME
 );
 
 CREATE TABLE PhotoUserTags (
   photo_id INT NOT NULL,
-  user_id INT NOT NULL,
-  FOREIGN KEY (photo_id) REFERENCES Photos(photo_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  PRIMARY KEY (photo_id, user_id)
+  user_id INT NOT NULL
 );
 
 CREATE TABLE PostPhotos (
   post_id INT NOT NULL,
-  photo_id INT NOT NULL,
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  FOREIGN KEY (photo_id) REFERENCES Photos(photo_id),
-  PRIMARY KEY (post_id, photo_id)
+  photo_id INT NOT NULL
 );
 
 CREATE TABLE CampaignPosts (
   campaign_id INT NOT NULL,
-  post_id INT NOT NULL,
-  FOREIGN KEY (campaign_id) REFERENCES Campaigns(campaign_id),
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  PRIMARY KEY (campaign_id, post_id)
+  post_id INT NOT NULL
 );
 
 CREATE TABLE Blocks (
   blocker_id INT NOT NULL,
-  blockee_id INT NOT NULL,
-  FOREIGN KEY (blocker_id) REFERENCES Users(blocker_id),
-  FOREIGN KEY (blockee_id) REFERENCES Users(blockee_id),
-  PRIMARY KEY (blocker_id, blockee_id)
+  blockee_id INT NOT NULL
 );
 
 CREATE TABLE Follows (
   follower_id INT NOT NULL,
-  followee_id INT NOT NULL,
-  FOREIGN KEY (follower_id) REFERENCES Users(follower_id),
-  FOREIGN KEY (followee_id) REFERENCES Users(followee_id),
-  PRIMARY KEY (follower_id, followee_id)
+  followee_id INT NOT NULL
 );
 
 CREATE TABLE CollectionPosts (
   collection_id INT NOT NULL,
   post_id INT NOT NULL,
-  post_description VARCHAR(10000),
-  FOREIGN KEY (collection_id) REFERENCES Collections(collection_id),
-  FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-  PRIMARY KEY (collection_id, post_id)
+  post_description VARCHAR(10000)
 );
+
+-- Table Indexes
+
+ALTER TABLE Users ADD PRIMARY KEY (user_id);
+
+ALTER TABLE Subscriptions ADD PRIMARY KEY (user_id);
+
+ALTER TABLE Posts ADD PRIMARY KEY (post_id);
+
+ALTER TABLE Photos ADD PRIMARY KEY (photo_id);
+
+ALTER TABLE CameraModels ADD PRIMARY KEY (camera_model);
+
+ALTER TABLE Bans ADD PRIMARY KEY (ban_id);
+
+ALTER TABLE Collections ADD PRIMARY KEY (collection_id);
+
+ALTER TABLE Tags ADD PRIMARY KEY (tag_name);
+
+ALTER TABLE Campaigns ADD PRIMARY KEY (campaign_id);
+
+ALTER TABLE Comments ADD PRIMARY KEY (comment_id, post_id);
+
+ALTER TABLE Thumbnails ADD PRIMARY KEY (photo_id, resolution_x, resolution_y);
+
+ALTER TABLE PostTags ADD PRIMARY KEY (post_id, tag_name);
+
+ALTER TABLE PostLikes ADD PRIMARY KEY (post_id, user_id);
+
+ALTER TABLE CommentLikes ADD PRIMARY KEY (comment_id, user_id);
+
+ALTER TABLE PhotoUserTags ADD PRIMARY KEY (photo_id, user_id);
+
+ALTER TABLE PostPhotos ADD PRIMARY KEY (post_id, photo_id);
+
+ALTER TABLE CampaignPosts ADD PRIMARY KEY (campaign_id, post_id);
+
+ALTER TABLE Blocks ADD PRIMARY KEY (blocker_id, blockee_id);
+
+ALTER TABLE Follows ADD PRIMARY KEY (follower_id, followee_id);
+
+ALTER TABLE CollectionPosts ADD PRIMARY KEY (collection_id, post_id);
+
+-- Table Constraints
+
+ALTER TABLE Users ADD FOREIGN KEY (profile_photo_id) REFERENCES Photos(photo_id);
+
+ALTER TABLE Subscriptions ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Posts ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Bans ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Collections ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Campaigns ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Comments ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
+ALTER TABLE Comments ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Thumbnails ADD FOREIGN KEY (photo_id) REFERENCES Photos(photo_id);
+
+ALTER TABLE PostTags ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
+ALTER TABLE PostTags ADD FOREIGN KEY (tag_name) REFERENCES Tags(tag_name);
+
+ALTER TABLE PostLikes ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
+ALTER TABLE PostLikes ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE CommentLikes ADD FOREIGN KEY (comment_id) REFERENCES Comments(comment_id);
+ALTER TABLE CommentLikes ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE PhotoUserTags ADD FOREIGN KEY (photo_id) REFERENCES Photos(photo_id);
+ALTER TABLE PhotoUserTags ADD FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE PostPhotos ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
+ALTER TABLE PostPhotos ADD FOREIGN KEY (photo_id) REFERENCES Photos(photo_id);
+
+ALTER TABLE CampaignPosts ADD FOREIGN KEY (campaign_id) REFERENCES Campaigns(campaign_id);
+ALTER TABLE CampaignPosts ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
+
+ALTER TABLE Blocks ADD FOREIGN KEY (blocker_id) REFERENCES Users(user_id);
+ALTER TABLE Blocks ADD FOREIGN KEY (blockee_id) REFERENCES Users(user_id);
+
+ALTER TABLE Follows ADD FOREIGN KEY (follower_id) REFERENCES Users(user_id);
+ALTER TABLE Follows ADD FOREIGN KEY (followee_id) REFERENCES Users(user_id);
+
+ALTER TABLE CollectionPosts ADD FOREIGN KEY (collection_id) REFERENCES Collections(collection_id);
+ALTER TABLE CollectionPosts ADD FOREIGN KEY (post_id) REFERENCES Posts(post_id);
