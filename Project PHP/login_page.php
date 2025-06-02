@@ -14,7 +14,10 @@
 </head>
 
 <body>
+    <!-- top header  -->
     <?php require_once 'header.inc.php';?>
+
+    <!-- Main body -->
     <h2>Login Page</h2>
     <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
 
