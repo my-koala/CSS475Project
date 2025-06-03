@@ -69,7 +69,7 @@ require_once 'header.inc.php';
 
     <?php if (!empty($message)) echo "<p style='color:green;'>$message</p>"; ?>
 
-    <form method="POST" action="subscribe.php">
+    <form method="POST" action="subscription_page.php">
         <label for="username">Username:</label><br>
         <input type="text" name="username" required><br><br>
 
