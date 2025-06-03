@@ -31,5 +31,5 @@
 <!-- 
 
 ??? collection page -->
-<h1>Sample PHP Database Program</h1>
+
 
