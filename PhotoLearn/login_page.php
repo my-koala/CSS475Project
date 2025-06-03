@@ -1,13 +1,10 @@
 <?php
+session_start();
 /**
  * Created by Houming Ge
  * User: houming@uw.edu
  * Date: 6/2/2025
-*/?>
-
-<?php
-
-session_start();
+ */
 
 $valid_username = "admin";
 $valid_password = "password123";

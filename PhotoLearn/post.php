@@ -1,7 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * Modiflity by Houming Ge
+ * Created by Houming Ge
  * User: markk@uw.edu
  * Date: 7/24/2018
  * Time: 2:45 PM

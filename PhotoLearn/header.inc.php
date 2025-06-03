@@ -6,6 +6,10 @@
  * Time: 3:37 PM
  */
 ?>
+<head>
+    <link rel="stylesheet" href="base.css">
+</head>
+
 <!-- This is a common navigation base to call different web pages on the website -->
 <div class="topnav">
     <!-- Basic page for user to see -->
