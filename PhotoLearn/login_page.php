@@ -33,9 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result && $result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // TODO: change this part to the real SHA-256 hash
-        // For now i am just adding as check as password is same to the password in db
-        if ($password === $user['password']) {
+        // TODO: unsure this part is working, need to check
+        if (hash('sha256', $password) === $user['password']) {
             $_SESSION['username'] = $username;
             header("Location: index.php");
             exit;
