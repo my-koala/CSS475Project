@@ -8,6 +8,10 @@
 */?>
 
 <?php
+
+// Getting the information for the config file
+require_once 'config.inc.php';
+
 // Placeholder for actual search logic
 $searchResults = "";
 
