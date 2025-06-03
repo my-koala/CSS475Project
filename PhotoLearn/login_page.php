@@ -6,21 +6,50 @@ session_start();
  * Date: 6/2/2025
  */
 
-$valid_username = "admin";
-$valid_password = "password123";
+require_once 'config.inc.php';
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $database, $port);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if ($username === $valid_username && $password === $valid_password) {
-        $_SESSION['username'] = $username;
-        header("login_page.php"); // Redirect on success
-        exit;
+    // TODO: Fixing the to the our sql database search for this part
+    // Prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if user exists
+    if ($result && $result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+
+        // TODO: change this part to the real SHA-256 hash
+        // For now i am just adding as check as password is same to the password in db
+        if ($password === $user['password']) {
+            $_SESSION['username'] = $username;
+            header("Location: index.php");
+            exit;
+        } else {
+            $error = "Invalid username or password!";
+        }
     } else {
         $error = "Invalid username or password!";
     }
+
+    $stmt->close();
 }
+
+$conn->close();
 ?>
 
 <html>
