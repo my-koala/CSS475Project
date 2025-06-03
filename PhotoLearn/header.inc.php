@@ -26,7 +26,7 @@
     <a href="marketing_dashboard.php">Marketing Dashboard</a>
 
     
-</div></div>
+</div>
 
 <!-- 
 
