@@ -17,7 +17,7 @@
     <a href="post.php">Post</a>
     <a href="making_post.php">Making Post</a>
     <a href="login_page.php">Login</a>
-    <a href="subscription_page.php">Subscription Page</a>
+    <a href="subscription_page.php">Subscription</a>
 
     <!-- Hiden page unless been redirec to it. -->
     
