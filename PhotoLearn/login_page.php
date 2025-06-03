@@ -30,14 +30,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->bind_result();
 
     // Check if user exists
-    if ($result && $result->num_rows === 1) {
-        $user = $result->fetch_assoc();
+    if ($stmt->fetch()) {
+        if ($result && $result->num_rows === 1) {
+            $user = $result->fetch_assoc();
 
-        // TODO: unsure this part is working, need to check
-        if (hash('sha256', $password) === $user['password']) {
-            $_SESSION['username'] = $username;
-            header("Location: index.php");
-            exit;
+            // TODO: unsure this part is working, need to check
+            if (hash('sha256', $password) === $user['password']) {
+                $_SESSION['username'] = $username;
+                header("Location: index.php");
+                exit;
+            } else {
+                $error = "Invalid username or password!";
+            }
         } else {
             $error = "Invalid username or password!";
         }
