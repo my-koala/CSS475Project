@@ -13,17 +13,17 @@
     <a href="post.php">Post</a>
     <a href="making_post.php">Making Post</a>
     <a href="login_page.php">Login</a>
-    <a href="subscription_page">Subscription Page</a>
+    <a href="subscription_page.php">Subscription Page</a>
 
     <!-- Hiden page unless been redirec to it. -->
     
     
 
     <!-- This part need chekcing if the login is passed or not -->
-    <a href="admin_dashboard">Admin Dashboard</a>
-    <a href="admin_database">Admin Database</a>
+    <a href="admin_dashboard.php">Admin Dashboard</a>
+    <a href="admin_database.php">Admin Database</a>
 
-    <a href="marketing_dashboard">Marketing Dashboard</a>
+    <a href="marketing_dashboard.php">Marketing Dashboard</a>
 
     
 </div></div>
