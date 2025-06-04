@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
             $geolocation = $_POST['geolocation'] ?? '';
 
             $stmt = $conn->prepare("INSERT INTO Photos 
-                (user_id, resolution_x, resolution_y, camera_model, image_format, image_description, aperture, shutter_speed, iso, focal_length, geolocation, file_path)
+                (user_id, resolution_x, resolution_y, camera_model, image_format, image_description, aperture, shutter_speed, iso, focal_length, geolocation, image_path)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("iiisssssiiss", $user_id, $resX, $resY, $camera_model, $imageFormat, $image_description, $aperture, $shutter_speed, $iso, $focal_length, $geolocation, $filePath);
 
