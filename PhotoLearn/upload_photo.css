@@ -18,3 +18,13 @@ input[type=submit] {
     text-align: center;
     color: green;
 }
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f2f2f2;
+}
+
+h2 {
+    color: #333;
+}
