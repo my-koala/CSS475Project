@@ -77,7 +77,7 @@ require_once 'header.inc.php';
             <input type="submit" value="Search">
         </form>
         
-        <?php while ($row = $sql_result->fetch_assoc()): ?>
+        <?php while (($sql_result) && ($row = $sql_result->fetch_assoc())): ?>
         <div class="results">
             <?php
             echo htmlspecialchars($row['post_id']) . "\n";
