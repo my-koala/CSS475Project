@@ -64,31 +64,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Update ban form
     if (isset($_POST['update_ban_user'])) {
-        $update_ban_user_id = $_POST['update_ban_user_id'] ?? '';
+        $update_ban_id = $_POST['update_ban_id'] ?? '';
         $update_ban_reason = $_POST['update_ban_reason'] ?? '';
         $update_ban_start = $_POST['update_start_date'] ?? '';
         $update_ban_end = $_POST['update_end_date'] ?? '';
 
-        if (!empty($update_ban_user_id) && !empty($update_ban_reason) && !empty($update_ban_start) && !empty($update_ban_end))  {
-            $stmt = $conn->prepare("UPDATE Bans SET reason = ?, ban_start = ?, ban_end = ? WHERE user_id = ?");
+        if (!empty($update_ban_id) && !empty($update_ban_reason) && !empty($update_ban_start) && !empty($update_ban_end))  {
+            $stmt = $conn->prepare("UPDATE Bans SET reason = ?, ban_start = ?, ban_end = ? WHERE ban_id = ?");
             if (!$stmt) {
                 die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
             }
-            $stmt->bind_param("sssi", $update_ban_reason, $update_ban_start, $update_ban_end, $update_ban_user_id);
+            $stmt->bind_param("sssi", $update_ban_reason, $update_ban_start, $update_ban_end, $update_ban_id);
             if ($stmt->execute()) {
-                $message = "User $update_ban_user_id ban updated.";
+                $message = "User ban $update_ban_id updated.";
             } else {
                 $message = "Failed to update user ban.";
             }
             $stmt->close();
-        } else if (!empty($update_ban_user_id) && !empty($update_ban_reason)) {
-            $stmt = $conn->prepare("UPDATE Bans SET reason = ? WHERE user_id = ?");
+        } else if (!empty($update_ban_id) && !empty($update_ban_reason)) {
+            $stmt = $conn->prepare("UPDATE Bans SET reason = ? WHERE ban_id = ?");
             if (!$stmt) {
                 die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
             }
-            $stmt->bind_param("si", $update_ban_reason, $update_ban_user_id);
+            $stmt->bind_param("si", $update_ban_reason, $update_ban_id);
             if ($stmt->execute()) {
-                $message = "User $update_ban_user_id ban updated.";
+                $message = "User ban $update_ban_id updated.";
             } else {
                 $message = "Failed to update user ban.";
             }
@@ -157,10 +157,11 @@ $banlist = $conn->query("
         <input type="submit" name="unban_user" value="Unban User">
     </form>
     
+    <!-- Unban Form -->
     <h3>Update User Ban</h3>
     <form method="POST">
-        <label>User ID:</label>
-        <input type="number" name="update_ban_user_id" required>
+        <label>Ban ID:</label>
+        <input type="number" name="update_ban_id" required>
         
         <label>Reason:</label>
         <textarea name="update_ban_reason" required></textarea>
