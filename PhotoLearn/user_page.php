@@ -130,6 +130,44 @@ if (isset($_POST['unban_submit'])) {
         $message = "You cannot unblocks yourself.";
     }
 }
+
+// block form handling
+if (isset($_POST['Follows_submit'])) {
+    $your_id = intval($_POST['your_user_id']);
+    $target_id = intval($_POST['target_user_id']);
+
+    if ($your_id !== $target_id) {
+        $stmt = $conn->prepare("INSERT INTO UserFollows (follower_id, followee_id) VALUES (?, ?)");
+        $stmt->bind_param("ii", $your_id, $target_id);
+        if ($stmt->execute()) {
+            $message = "User $target_id has been Follows.";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $message = "You cannot Follows yourself";
+    }
+}
+
+// Unblock form handling
+if (isset($_POST['unFollows_submit'])) {
+    $your_id = intval($_POST['your_user_id_unFollows']);
+    $target_id = intval($_POST['target_user_id_unFollows']);
+
+    if ($your_id !== $target_id) {
+        $stmt = $conn->prepare("DELETE FROM UserFollows WHERE follower_id = ?" . " AND followee_id = ?");
+        $stmt->bind_param("ii", $your_id, $target_id);
+        if ($stmt->execute()) {
+            $message = "User $target_id has been unFollows.";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $message = "You cannot unFollows yourself.";
+    }
+}
 ?>
 
 
@@ -250,6 +288,28 @@ if (isset($_POST['unban_submit'])) {
         <input type="number" name="target_user_id_unban" required><br><br>
 
         <input type="submit" name="unban_submit" value="Unban User">
+    </form>
+
+    <h3>Follows a User</h3>
+    <form method="post">
+        <label>Your User ID:</label><br>
+        <input type="number" name="your_user_id" required><br><br>
+
+        <label>User ID to Follows:</label><br>
+        <input type="number" name="target_user_id" required><br><br>
+
+        <input type="submit" name="Follows_submit" value="Follows User">
+    </form>
+
+    <h3>unFollows a User</h3>
+    <form method="post">
+        <label>Your User ID:</label><br>
+        <input type="number" name="your_user_id_unFollows" required><br><br>
+
+        <label>User ID to Follows:</label><br>
+        <input type="number" name="target_user_id_unFollows" required><br><br>
+
+        <input type="submit" name="unFollows_submit" value="UnFollows User">
     </form>
 
 </body>
