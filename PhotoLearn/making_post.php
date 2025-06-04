@@ -102,21 +102,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
 
     <form method="post">
-        <label>Select Post:</label><br>
-        <select name="post_id" required>
-            <?php while ($row = $posts->fetch_assoc()): ?>
-                <option value="<?= $row['post_id'] ?>">Post #<?= $row['post_id'] ?></option>
-            <?php endwhile; ?>
-        </select><br><br>
+        <label for="post_id">Enter Post ID:</label><br>
+        <input type="number" name="post_id" id="post_id" required><br><br>
 
-        <label>Select Photo:</label><br>
-        <select name="photo_id" required>
-            <?php while ($row = $photos->fetch_assoc()): ?>
-                <option value="<?= $row['photo_id'] ?>">Photo #<?= $row['photo_id'] ?></option>
-            <?php endwhile; ?>
-        </select><br><br>
+        <label for="photo_id">Enter Photo ID:</label><br>
+        <input type="number" name="photo_id" id="photo_id" required><br><br>
 
         <input type="submit" value="Attach Photo">
+    </form>
 </body>
 
 </html>
