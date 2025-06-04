@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Clean trimmed tags to alphanumeric lowercase
         return "\"" . preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag))) . "\"";
     }, $searchTags);
-    $searchTagsString = implode(",", searchTags);
+    $searchTagsString = implode(",", $searchTags);
     
     $sql = "SELECT * FROM Posts";
     $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
@@ -52,8 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
         $sql .= " WHERE PostTags.tag_name in (" . $searchTagsString . ")";
     }
-    
-    $sql .= ";";
     
     $sql_result = $conn->query($sql);
     
@@ -91,7 +89,8 @@ require_once 'header.inc.php';
         <div class="results">
             <?php
             echo htmlspecialchars($row['post_id']) . "\n";
-            echo htmlspecialchars($row['user_id']);
+            echo htmlspecialchars($row['user_id']) . "\n";
+            echo htmlspecialchars($row['post_text']);
             ?>
         </div>
         <?php endwhile; ?>
