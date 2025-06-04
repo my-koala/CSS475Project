@@ -167,7 +167,7 @@ $user_list = $conn->query("SELECT user_id, username, display_name, join_date FRO
         <?php
     $today = new DateTime();
     while ($row = $user_list->fetch_assoc()):
-        $joined = new DateTime($row['date_created']);
+        $joined = new DateTime($row['join_date']);
         $diffDays = $today->diff($joined)->days;
 
         // Determine status
