@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTagsString = $_POST['tags'] ?? "";
     // Clean tags as trimmed alphanumeric lowercase
     $searchTags = explode(",", $searchTagsString);
+    $searchTagsString = "";
     $searchTags = array_map(function($searchTag) {
         $searchTag = preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag)));
         if (!empty($searchTag)) {
@@ -47,10 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         return "";
     }, $searchTags);
-    $searchTags = array_filter(function($searchTag) {
-        return !empty($searchTag);
-    }, $searchTags);
-    $searchTagsString = implode(",", $searchTags);
+    if (!empty($searchTags)) {
+        $searchTagsString = implode(",", $searchTags);
+    }
     
     $sql = "SELECT * FROM Posts";
     $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
