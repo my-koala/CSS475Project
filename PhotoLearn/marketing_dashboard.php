@@ -50,6 +50,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
     $stmt2->close();
 }
 }
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_campaign'])) {
+    $user_id = intval($_POST['user_id']);
+    $title = trim($_POST['title']);
+    $campaign_start = $_POST['campaign_start'];
+    $campaign_end = $_POST['campaign_end'];
+
+    if (!empty($user_id) && !empty($title) && !empty($campaign_start) && !empty($campaign_end)) {
+        $stmt = $conn->prepare("INSERT INTO Campaigns (user_id, title, campaign_start, campaign_end) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("isss", $user_id, $title, $campaign_start, $campaign_end);
+
+        if ($stmt->execute()) {
+            echo "<p style='color: green;'>Campaign created successfully!</p>";
+        } else {
+            echo "<p style='color: red;'>Failed to create campaign: " . htmlspecialchars($stmt->error) . "</p>";
+        }
+
+        $stmt->close();
+    } else {
+        echo "<p style='color: red;'>All fields are required to create a campaign.</p>";
+    }
+}
 ?>
 
 <html>
@@ -101,6 +123,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
     <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
     <p>No campaign found for user ID <?= htmlspecialchars($user_id) ?>.</p>
     <?php endif; ?>
+
+    <h3>Create a New Campaign</h3>
+    <form method="post">
+        <label for="user_id">Your User ID:</label><br>
+        <input type="number" name="user_id" id="user_id" required><br><br>
+
+        <label for="title">Campaign Title:</label><br>
+        <input type="text" name="title" id="title" required><br><br>
+
+        <label for="campaign_start">Start Date:</label><br>
+        <input type="date" name="campaign_start" id="campaign_start" required><br><br>
+
+        <label for="campaign_end">End Date:</label><br>
+        <input type="date" name="campaign_end" id="campaign_end" required><br><br>
+
+        <input type="submit" name="create_campaign" value="Create Campaign">
+    </form>
+
 
 </body>
 
