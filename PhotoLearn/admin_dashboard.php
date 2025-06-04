@@ -117,6 +117,9 @@ $banlist = $conn->query("
     FROM Bans b
     JOIN Users u ON b.user_id = u.user_id
 ");
+
+$user_list = $conn->query("SELECT user_id, username, display_name, email, date_created FROM Users");
+
 ?>
 
 <html>
@@ -134,7 +137,7 @@ $banlist = $conn->query("
 
     <h2>Admin Dashboard</h2>
     <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
-    
+
     <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
 
     <!-- Ban Form -->
@@ -142,7 +145,7 @@ $banlist = $conn->query("
     <form method="POST">
         <label>User ID:</label>
         <input type="number" name="ban_user_id" required><br>
-        
+
         <label>Reason:</label>
         <textarea name="ban_reason" required></textarea>
         <input type="submit" name="ban_user" value="Ban User">
@@ -153,25 +156,25 @@ $banlist = $conn->query("
     <form method="POST">
         <label>User ID:</label>
         <input type="number" name="unban_user_id" required>
-        
+
         <input type="submit" name="unban_user" value="Unban User">
     </form>
-    
+
     <!-- Unban Form -->
     <h3>Update User Ban</h3>
     <form method="POST">
         <label>Ban ID:</label>
         <input type="number" name="update_ban_id" required><br>
-        
+
         <label>Reason:</label>
         <textarea name="update_ban_reason" required></textarea><br>
-        
+
         <label>Start Date:</label>
         <input type="date" name="update_ban_start_date">
-        
+
         <label>End Date:</label>
         <input type="date" name="update_ban_end_date"><br>
-        
+
         <input type="submit" name="update_ban_user" value="Update Ban">
     </form>
 
@@ -214,6 +217,26 @@ $banlist = $conn->query("
             <td><?php echo htmlspecialchars($row['plan'] ?? 'None'); ?></td>
             <td><?php echo htmlspecialchars($row['date_start'] ?? ''); ?></td>
             <td><?php echo htmlspecialchars($row['date_end'] ?? ''); ?></td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
+
+    <h3>Registered Users</h3>
+    <table>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Display Name</th>
+            <th>Email</th>
+            <th>Date Created</th>
+        </tr>
+        <?php while ($row = $user_list->fetch_assoc()): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['user_id']) ?></td>
+            <td><?= htmlspecialchars($row['username']) ?></td>
+            <td><?= htmlspecialchars($row['display_name']) ?></td>
+            <td><?= htmlspecialchars($row['email']) ?></td>
+            <td><?= htmlspecialchars($row['date_created']) ?></td>
         </tr>
         <?php endwhile; ?>
     </table>
