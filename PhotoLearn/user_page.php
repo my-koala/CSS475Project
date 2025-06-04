@@ -93,44 +93,43 @@ if (isset($_POST['delete_user'])) {
 
 $user_list = $conn->query("SELECT user_id, username, display_name, join_date FROM Users");
 
-// Ban form handling
+// block form handling
 if (isset($_POST['ban_submit'])) {
     $your_id = intval($_POST['your_user_id']);
     $target_id = intval($_POST['target_user_id']);
-    $reason = trim($_POST['reason']);
     $ban_start = date("Y-m-d H:i:s");
     $ban_end = date("Y-m-d H:i:s", strtotime("+1 year"));
 
     if ($your_id !== $target_id && !empty($reason)) {
-        $stmt = $conn->prepare("INSERT INTO Bans (reason, user_id, ban_start, ban_end) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("siss", $reason, $target_id, $ban_start, $ban_end);
+        $stmt = $conn->prepare("INSERT INTO UserBlocks (blocker_id, blockee_id) VALUES (?, ?)");
+        $stmt->bind_param("ii", $your_id, $target_id);
         if ($stmt->execute()) {
-            $message = "User $target_id has been banned.";
+            $message = "User $target_id has been blocks.";
         } else {
             $message = "Error: " . $stmt->error;
         }
         $stmt->close();
     } else {
-        $message = "You cannot ban yourself or leave reason empty.";
+        $message = "You cannot blocks yourself";
     }
 }
 
-// Unban form handling
+// Unblock form handling
 if (isset($_POST['unban_submit'])) {
     $your_id = intval($_POST['your_user_id_unban']);
     $target_id = intval($_POST['target_user_id_unban']);
 
     if ($your_id !== $target_id) {
-        $stmt = $conn->prepare("DELETE FROM Bans WHERE user_id = ?");
-        $stmt->bind_param("i", $target_id);
+        $stmt = $conn->prepare("DELETE FROM UserBlocks WHERE blocker_id = ?" . " AND blockee_id = ?");
+        $stmt->bind_param("ii", $your_id, $target_id);
         if ($stmt->execute()) {
-            $message = "User $target_id has been unbanned.";
+            $message = "User $target_id has been unblocks.";
         } else {
             $message = "Error: " . $stmt->error;
         }
         $stmt->close();
     } else {
-        $message = "You cannot unban yourself.";
+        $message = "You cannot unblocks yourself.";
     }
 }
 ?>
@@ -233,26 +232,23 @@ if (isset($_POST['unban_submit'])) {
 
     <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
 
-    <h3>Ban a User</h3>
+    <h3>blocks a User</h3>
     <form method="post">
         <label>Your User ID:</label><br>
         <input type="number" name="your_user_id" required><br><br>
 
-        <label>User ID to Ban:</label><br>
+        <label>User ID to blocks:</label><br>
         <input type="number" name="target_user_id" required><br><br>
-
-        <label>Reason:</label><br>
-        <textarea name="reason" rows="3" cols="40" required></textarea><br><br>
 
         <input type="submit" name="ban_submit" value="Ban User">
     </form>
 
-    <h3>Unban a User</h3>
+    <h3>unblocks a User</h3>
     <form method="post">
         <label>Your User ID:</label><br>
         <input type="number" name="your_user_id_unban" required><br><br>
 
-        <label>User ID to Unban:</label><br>
+        <label>User ID to unblocks:</label><br>
         <input type="number" name="target_user_id_unban" required><br><br>
 
         <input type="submit" name="unban_submit" value="Unban User">
