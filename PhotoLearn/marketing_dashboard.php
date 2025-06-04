@@ -3,7 +3,7 @@ require_once 'config.inc.php';
 $conn = new mysqli($servername, $username, $password, $database, $port);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
-$user_id = '';
+// $user_id = '';
 $campaign = null;
 $campaignPosts = [];
 
