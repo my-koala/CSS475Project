@@ -42,7 +42,6 @@ CREATE TABLE IF NOT EXISTS Subscriptions (
   plan VARCHAR(16) NOT NULL CHECK (plan IN ('premium', 'marketing', 'admin')),
   date_start DATETIME,
   date_end DATETIME,
-  CONSTRAINT CHECK (date_start <= date_end),
   PRIMARY KEY (subscription_id)
 );
 
@@ -53,7 +52,6 @@ CREATE TABLE IF NOT EXISTS Bans (
   user_id INT,
   ban_start DATETIME,
   ban_end DATETIME,
-  CONSTRAINT CHECK (ban_start <= ban_end),
   PRIMARY KEY (ban_id)
 );
 
@@ -365,6 +363,12 @@ INSERT INTO Campaigns (campaign_id, user_id, title, campaign_start, campaign_end
 INSERT INTO CampaignPosts (campaign_id, post_id) VALUES
 (1, 2),
 (1, 4);
+
+-- Table Checks
+
+ALTER TABLE Subscriptions ADD CONSTRAINT sub_date CHECK (date_start <= date_end);
+
+ALTER TABLE Bans ADD CONSTRAINT ban_date CHECK (ban_start <= ban_end);
 
 -- Table Foreign Keys
 
