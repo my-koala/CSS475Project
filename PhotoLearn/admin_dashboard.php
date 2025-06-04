@@ -32,7 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ban_end = date("Y-m-d", strtotime("+1 year"));
 
         if (!empty($ban_user_id) && !empty($ban_reason)) {
-            $stmt = $conn->prepare("INSERT INTO 'Bans' ('reason', 'user_id', 'ban_start', 'ban_end') VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Bans (reason, user_id, ban_start, ban_end) VALUES (?, ?, ?, ?)");
+            if (!$stmt) {
+                die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+            }
             $stmt->bind_param("siss", $ban_reason, $ban_user_id, $ban_start, $ban_end);
             if ($stmt->execute()) {
                 $message = "User $ban_user_id has been banned.";
@@ -54,6 +57,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message = "User $unban_user_id has been unbanned.";
             } else {
                 $message = "Failed to unban user.";
+            }
+            $stmt->close();
+        }
+    }
+    
+    // Update ban form
+    if (isset($_POST['update_ban_user'])) {
+        $update_ban_user_id = $_POST['update_ban_user_id'] ?? '';
+        $update_ban_reason = $_POST['update_ban_reason'] ?? '';
+        $update_ban_start = $_POST['update_start_date'] ?? '';
+        $update_ban_end = $_POST['update_end_date'] ?? '';
+
+        if (!empty($update_ban_user_id) && !empty($update_ban_reason) && !empty($update_ban_start) && !empty($update_ban_end))  {
+            $stmt = $conn->prepare("UPDATE Bans SET reason = ?, ban_start = ?, ban_end = ? WHERE user_id = ?");
+            if (!$stmt) {
+                die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+            }
+            $stmt->bind_param("sssi", $update_ban_reason, $update_ban_start, $update_ban_end, $update_ban_user_id);
+            if ($stmt->execute()) {
+                $message = "User $update_ban_user_id ban updated.";
+            } else {
+                $message = "Failed to update user ban.";
+            }
+            $stmt->close();
+        } else if (!empty($update_ban_user_id) && !empty($update_ban_reason)) {
+            $stmt = $conn->prepare("UPDATE Bans SET reason = ? WHERE user_id = ?");
+            if (!$stmt) {
+                die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+            }
+            $stmt->bind_param("si", $update_ban_reason, $update_ban_user_id);
+            if ($stmt->execute()) {
+                $message = "User $update_ban_user_id ban updated.";
+            } else {
+                $message = "Failed to update user ban.";
             }
             $stmt->close();
         }
@@ -97,13 +134,15 @@ $banlist = $conn->query("
 
     <h2>Admin Dashboard</h2>
     <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
-    <p>Total Users: <?php echo $total_users; ?></p>
+    
+    <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
 
     <!-- Ban Form -->
     <h3>Ban a User</h3>
     <form method="POST">
         <label>User ID:</label>
         <input type="number" name="ban_user_id" required>
+        
         <label>Reason:</label>
         <textarea name="ban_reason" required></textarea>
         <input type="submit" name="ban_user" value="Ban User">
@@ -114,7 +153,25 @@ $banlist = $conn->query("
     <form method="POST">
         <label>User ID:</label>
         <input type="number" name="unban_user_id" required>
+        
         <input type="submit" name="unban_user" value="Unban User">
+    </form>
+    
+    <h3>Update User Ban</h3>
+    <form method="POST">
+        <label>User ID:</label>
+        <input type="number" name="update_ban_user_id" required>
+        
+        <label>Reason:</label>
+        <textarea name="update_ban_reason" required></textarea>
+        
+        <label>Start Date:</label>
+        <input type="date" name="update_ban_start_date">
+        
+        <label>End Date:</label>
+        <input type="date" name="update_ban_end_date">
+        
+        <input type="submit" name="update_ban_user" value="Update Ban">
     </form>
 
     <!-- Ban List -->
@@ -140,6 +197,7 @@ $banlist = $conn->query("
         <?php endwhile; ?>
     </table>
 
+    <p>Total Users: <?php echo $total_users; ?></p>
 
     <h3>User Subscriptions</h3>
     <table>
