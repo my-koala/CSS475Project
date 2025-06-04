@@ -25,40 +25,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // TODO: Fixing the to the our sql database search for this part
-    // Prevent SQL injection
-    $stmt = $conn->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->bind_result();
-
     if ($username === $valid_username && $password === $valid_password) {
         $_SESSION['username'] = $username;
         header("Location: admin_dashboard.php");
         exit();
-    }
+    } else {
 
-    // Check if user exists
-    if ($stmt->fetch()) {
-        if ($result && $result->num_rows === 1) {
-            $user = $result->fetch_assoc();
+        // TODO: Fixing the to the our sql database search for this part
+        // Prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->bind_result();
 
-            // TODO: unsure this part is working, need to check
-            if (hash('sha256', $password) === $user['password']) {
-                $_SESSION['username'] = $username;
-                header("Location: index.php");
-                exit;
+        // Check if user exists
+        if ($stmt->fetch()) {
+            if ($result && $result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+
+                // TODO: unsure this part is working, need to check
+                if (hash('sha256', $password) === $user['password']) {
+                    $_SESSION['username'] = $username;
+                    header("Location: index.php");
+                    exit;
+                } else {
+                    $error = "Invalid username or password!";
+                }
             } else {
                 $error = "Invalid username or password!";
             }
         } else {
             $error = "Invalid username or password!";
         }
-    } else {
-        $error = "Invalid username or password!";
-    }
 
-    $stmt->close();
+        $stmt->close();
+    }
 }
 
 $conn->close();
