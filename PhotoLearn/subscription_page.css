@@ -8,10 +8,10 @@ h2 {
     color: #333;
 }
 
-.error p {
+.error {
     color: red;
 }
 
-.message p {
+.message {
     color: green;
 }
