@@ -51,9 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "Error creating post.";
     }
     $stmt->close();
+}
 
-    // Handle form submission
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] == "update") {
         $post_id = intval($_POST['post_id']);
         $photo_id = intval($_POST['photo_id']);
 
@@ -69,9 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     }
 
-    $posts = $conn->query("SELECT post_id FROM Posts ORDER BY post_id DESC");
-    $photos = $conn->query("SELECT photo_id FROM Photos ORDER BY photo_id DESC");
-}
 ?>
 
 <html>
@@ -101,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Attach Photo to Post</h2>
     <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
 
-    <form method="post">
+    <form method="update">
         <label for="post_id">Enter Post ID:</label><br>
         <input type="number" name="post_id" id="post_id" required><br><br>
 
