@@ -217,7 +217,6 @@ require_once 'header.inc.php';
             echo "<h4>Comments</h4>";
             while (!empty($sql_comments_results) && $sql_comments_result = $sql_comments_results->fetch_assoc()) {
                 echo htmlspecialchars($sql_comments_result['display_name']) . " commented on " . htmlspecialchars($sql_comments_result['comment_timestamp']) . ":<br>";
-                echo "<h5>" . htmlspecialchars($sql_comments_result['comment_text']) . "</h5>";
                 
                 $comment_id = $sql_comments_result['comment_id'];
                 
@@ -248,7 +247,7 @@ require_once 'header.inc.php';
                 } else {
                     echo "Like Count: 0<br>";
                 }
-                
+                echo "<h5>" . htmlspecialchars($sql_comments_result['comment_text']) . "</h5>";
             }
             
             $sql_tags_results = $conn->query($sql_photos);
