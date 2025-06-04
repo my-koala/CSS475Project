@@ -4,49 +4,32 @@ session_start();
 
 require_once 'config.inc.php';
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $database, $port);
-
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
 $message = "";
-
 $uploadDir = "images/";
-
 $maxSize = 2 * 1024 * 1024; // 2MB
 
-$maxSizePRO = 5 * 1024 * 1024; // 2MB
-
-if ($_FILES["photo"]["size"] > $maxSize) {
-    $message = "File size exceeds 2MB limit.";
-} else {
-
-
-// Handle upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
-    $fileTmp = $_FILES["photo"]["tmp_name"];
-    $fileName = basename($_FILES["photo"]["name"]);
-    $filePath = $uploadDir . $fileName;
-    $imageFormat = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-
-    if (!in_array($imageFormat, ['jpg', 'jpeg', 'png', 'gif'])) {
-        $message = "Invalid file format.";
+    if ($_FILES["photo"]["size"] > $maxSize) {
+        $message = "File size exceeds 2MB limit.";
     } else {
+        $fileTmp = $_FILES["photo"]["tmp_name"];
+        $fileName = basename($_FILES["photo"]["name"]);
+        $filePath = $uploadDir . $fileName;
+        $imageFormat = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
-        if (move_uploaded_file($fileTmp, $filePath)) {
-
+        if (!in_array($imageFormat, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $message = "Invalid file format.";
+        } else if (move_uploaded_file($fileTmp, $filePath)) {
             $imgInfo = getimagesize($filePath);
             $resX = $imgInfo[0];
             $resY = $imgInfo[1];
-            
-            // TODO: i need to check if this part of SQL call is wortking
-            $stmt = $conn->prepare("SELECT user_id FROM Users WHERE username = ?");
-            $stmt->bind_param("s", $$_POST['user_id']);
-            $stmt->execute();
-            $stmt->bind_result($user_id);
 
+            $username = $_POST['username'] ?? '';
             $camera_model = $_POST['camera_model'] ?? '';
             $image_description = $_POST['image_description'] ?? '';
             $aperture = $_POST['aperture'] ?? '';
@@ -55,22 +38,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
             $focal_length = $_POST['focal_length'] ?? '';
             $geolocation = $_POST['geolocation'] ?? '';
 
-            $stmt = $conn->prepare("INSERT INTO Photos 
-                (user_id, resolution_x, resolution_y, camera_model, image_format, image_description, aperture, shutter_speed, iso, focal_length, geolocation, image_path)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisssssisss", $user_id, $resX, $resY, $camera_model, $imageFormat, $image_description, $aperture, $shutter_speed, $iso, $focal_length, $geolocation, $filePath);
-
-            if ($stmt->execute()) {
-                $message = "Upload and metadata saved successfully!";
+            // Get user_id
+            $stmt = $conn->prepare("SELECT user_id FROM Users WHERE username = ?");
+            if (!$stmt) die("User SELECT prepare failed: " . $conn->error);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $stmt->bind_result($user_id);
+            if (!$stmt->fetch()) {
+                $message = "User not found.";
+                $stmt->close();
             } else {
-                $message = "Failed to save to database.";
+                $stmt->close();
+
+                // Check if camera_model exists in CameraModels
+                $stmt = $conn->prepare("SELECT camera_model FROM CameraModels WHERE camera_model = ?");
+                if (!$stmt) die("Camera SELECT prepare failed: " . $conn->error);
+                $stmt->bind_param("s", $camera_model);
+                $stmt->execute();
+                $stmt->store_result();
+
+                if ($stmt->num_rows === 0 && !empty($camera_model)) {
+                    // Insert into CameraModels
+                    $stmt->close();
+                    $stmt = $conn->prepare("INSERT INTO CameraModels (camera_model, camera_manufacturer, device) VALUES (?, NULL, NULL)");
+                    if (!$stmt) die("Camera INSERT prepare failed: " . $conn->error);
+                    $stmt->bind_param("s", $camera_model);
+                    $stmt->execute();
+                }
+                $stmt->close();
+
+                // Insert into Photos
+                $stmt = $conn->prepare("INSERT INTO Photos 
+                    (user_id, resolution_x, resolution_y, camera_model, image_format, image_description, aperture, shutter_speed, iso, focal_length, geolocation, image_path)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                if (!$stmt) die("Photos INSERT prepare failed: " . $conn->error);
+                $stmt->bind_param("iiisssssisss", $user_id, $resX, $resY, $camera_model, $imageFormat, $image_description, $aperture, $shutter_speed, $iso, $focal_length, $geolocation, $filePath);
+
+                if ($stmt->execute()) {
+                    $message = "Upload and metadata saved successfully!";
+                } else {
+                    $message = "Failed to save to database.";
+                }
+                $stmt->close();
             }
-            $stmt->close();
         } else {
             $message = "Failed to upload file.";
         }
     }
-}
 }
 ?>
 
