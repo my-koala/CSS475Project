@@ -10,7 +10,7 @@ $message = "";
 $uploadDir = "uploads/";
 if (!file_exists($uploadDir)) mkdir($uploadDir);
 
-if (isset($_POST["Submit Post"])) {
+if (isset($_POST["submit_post"])) {
     $user_id = intval($_POST['user_id']);
     $post_text = trim($_POST['post_text']);
     $image_description = trim($_POST['image_description']);
@@ -54,7 +54,7 @@ if (isset($_POST["Submit Post"])) {
 }
 
 // Handle form submission
-    if (isset($_POST["Attach Photo"])) {
+    if (isset($_POST["attach_photo"])) {
         $post_id = intval($_POST['post_id']);
         $photo_id = intval($_POST['photo_id']);
 
@@ -93,20 +93,20 @@ if (isset($_POST["Submit Post"])) {
         <label>Post Text:</label><br>
         <textarea name="post_text" rows="5" cols="40" required></textarea><br><br>
 
-        <input type="submit" value="Submit Post">
+        <input type="submit" name= "submit_post" value="Submit Post">
     </form>
 
     <h2>Attach Photo to Post</h2>
     <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
 
-    <form method="update">
+    <form method="post">
         <label for="post_id">Enter Post ID:</label><br>
         <input type="number" name="post_id" id="post_id" required><br><br>
 
         <label for="photo_id">Enter Photo ID:</label><br>
         <input type="number" name="photo_id" id="photo_id" required><br><br>
 
-        <input type="submit" value="Attach Photo">
+        <input type="submit" value="Attach Photo" name="attach_photo">
     </form>
 </body>
 
