@@ -227,7 +227,7 @@ require_once 'header.inc.php';
                 $sql_comment_like_count .= "GROUP BY PostCommentLikes.comment_id";
                 
                 $sql_comment_like_count_results = $conn->query($sql_comment_like_count);
-                if (!empty(sql_comment_like_count_result)) {
+                if (!empty($sql_comment_like_count_results)) {
                     $sql_comment_like_count_result = $sql_comment_like_count_results->fetch_assoc();
                     if (!empty($sql_comment_like_count_result)) {
                         echo "Like Count: " . htmlspecialchars($sql_comment_like_count_result['like_count']) . "<br>";
