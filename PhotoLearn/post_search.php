@@ -38,6 +38,7 @@ $searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTagsString = $_POST['tags'] ?? "";
+    echo $searchTagsString;
     $searchTags = explode(",", $searchTagsString);
     $searchTags = array_map(function($searchTag) {
         // Clean trimmed tags to alphanumeric lowercase
