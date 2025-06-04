@@ -7,23 +7,67 @@ if ($conn->connect_error) {
 }
 
 $message = "";
+$uploadDir = "uploads/";
+if (!file_exists($uploadDir)) mkdir($uploadDir);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = intval($_POST['user_id']);
     $post_text = trim($_POST['post_text']);
-    $time_stamp = date("Y-m-d-H:i:s");
+    $image_description = trim($_POST['image_description']);
+    $time_stamp = date("Y-m-d H:i:s");
     $ctr = 0;
+    $photo_id = null;
 
-    $stmt = $conn->prepare("INSERT INTO Posts (user_id, post_text, time_stamp, ctr) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("issi", $user_id, $post_text, $time_stamp, $ctr);
+    // Handle image upload
+    if (isset($_FILES["photo"]) && $_FILES["photo"]["error"] == 0) {
+        $fileTmp = $_FILES["photo"]["tmp_name"];
+        $fileName = basename($_FILES["photo"]["name"]);
+        $targetPath = $uploadDir . $fileName;
+        $imageFormat = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
 
+        if (!in_array($imageFormat, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $message = "Invalid image format.";
+        } elseif ($_FILES["photo"]["size"] > 2 * 1024 * 1024) {
+            $message = "Image size exceeds 2MB.";
+        } elseif (move_uploaded_file($fileTmp, $targetPath)) {
+            // Save photo metadata
+            $stmt = $conn->prepare("INSERT INTO Photos (user_id, image_description, image_path) VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $user_id, $image_description, $targetPath);
+            if ($stmt->execute()) {
+                $photo_id = $stmt->insert_id;
+            }
+            $stmt->close();
+        } else {
+            $message = "Failed to upload image.";
+        }
+    }
+
+    // Create post
+    $stmt = $conn->prepare("INSERT INTO Posts (user_id, post_text, time_stamp, ctr, photo_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("issii", $user_id, $post_text, $time_stamp, $ctr, $photo_id);
     if ($stmt->execute()) {
         $message = "Post created successfully!";
     } else {
-        $message = "Error: " . $stmt->error;
+        $message = "Error creating post.";
     }
-
     $stmt->close();
+
+    // Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $post_id = intval($_POST['post_id']);
+        $photo_id = intval($_POST['photo_id']);
+
+        $stmt = $conn->prepare("INSERT INTO PostPhotos (post_id, photo_id) VALUES (?, ?)");
+        $stmt->bind_param("ii", $post_id, $photo_id);
+
+        if ($stmt->execute()) {
+            $message = "Photo attached to post!";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
 }
 ?>
 
@@ -50,6 +94,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <input type="submit" value="Submit Post">
     </form>
+
+    <h2>Attach Photo to Post</h2>
+    <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
+
+    <form method="post">
+        <label>Select Post:</label><br>
+        <select name="post_id" required>
+            <?php while ($row = $posts->fetch_assoc()): ?>
+                <option value="<?= $row['post_id'] ?>">Post #<?= $row['post_id'] ?></option>
+            <?php endwhile; ?>
+        </select><br><br>
+
+        <label>Select Photo:</label><br>
+        <select name="photo_id" required>
+            <?php while ($row = $photos->fetch_assoc()): ?>
+                <option value="<?= $row['photo_id'] ?>">Photo #<?= $row['photo_id'] ?></option>
+            <?php endwhile; ?>
+        </select><br><br>
+
+        <input type="submit" value="Attach Photo">
 </body>
 
 </html>
