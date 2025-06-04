@@ -13,7 +13,16 @@ if ($conn->connect_error) {
 
 $message = "";
 
-$uploadDir = "cat/";
+$uploadDir = "./images/";
+
+$maxSize = 2 * 1024 * 1024; // 2MB
+
+$maxSizePRO = 5 * 1024 * 1024; // 2MB
+
+if ($_FILES["photo"]["size"] > $maxSize) {
+    $message = "File size exceeds 2MB limit.";
+} else {
+
 
 // Handle upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
@@ -57,6 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
         }
     }
 }
+}
 ?>
 
 <html>
@@ -71,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
     <?php require_once 'header.inc.php';?>
 
     <!-- Main body -->
-    <h2 style="text-align:center;">Upload Photo to /cat</h2>
+    <h2 style="text-align:center;">Upload Photo to </h2>
 
     <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
 
