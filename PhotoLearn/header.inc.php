@@ -18,6 +18,8 @@
     <a href="making_post.php">Making Post</a>
     <a href="login_page.php">Login</a>
     <a href="subscription_page.php">Subscription</a>
+    <a href="upload_photo.php">Upload Photo</a>
+    <a href="user_page.php">User</a>
 
     <!-- Hiden page unless been redirec to it. -->
     
