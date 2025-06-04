@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTags = explode(",", $searchTagsString);
     $searchTags = array_map(function($searchTag) {
         // Clean trimmed tags to alphanumeric lowercase
-        return preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag)));
+        return "\"" . preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag))) . "\"";
     }, $searchTags);
     $searchTagsString = implode(",", searchTags);
     
@@ -50,17 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
     if (!empty($searchTagsString)) {
         $sql .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
-        $sql .= " WHERE PostTags.tag in (" . $searchTagsString . ")";
+        $sql .= " WHERE PostTags.tag_name in (" . $searchTagsString . ")";
     }
     
     $sql .= ";";
     
     $sql_result = $conn->query($sql);
     
-    $searchResultMessage = "Tags included: ";
-    foreach ($searchTags as $searchTag) {
-        $searchResultMessage .= $searchTag . ", ";
-    }
+    $searchResultMessage = "Tags included: " . $searchTagsString;
 }
 
 ?>
@@ -78,7 +75,7 @@ require_once 'header.inc.php';
     <div>
         <h2>Search Posts</h2>
         <form method="post" action="post_search.php">
-            <input type="text" name="tags" placeholder="Enter tags separated by commas" required>
+            <input type="text" name="tags" placeholder="Enter tags separated by commas">
             <input type="submit" value="Search">
         </form>
         
