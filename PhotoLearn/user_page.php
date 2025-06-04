@@ -97,10 +97,8 @@ $user_list = $conn->query("SELECT user_id, username, display_name, join_date FRO
 if (isset($_POST['ban_submit'])) {
     $your_id = intval($_POST['your_user_id']);
     $target_id = intval($_POST['target_user_id']);
-    $ban_start = date("Y-m-d H:i:s");
-    $ban_end = date("Y-m-d H:i:s", strtotime("+1 year"));
 
-    if ($your_id !== $target_id && !empty($reason)) {
+    if ($your_id !== $target_id) {
         $stmt = $conn->prepare("INSERT INTO UserBlocks (blocker_id, blockee_id) VALUES (?, ?)");
         $stmt->bind_param("ii", $your_id, $target_id);
         if ($stmt->execute()) {
