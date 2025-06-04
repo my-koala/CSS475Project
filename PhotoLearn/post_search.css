@@ -35,3 +35,8 @@ input[type="submit"] {
     padding: 15px;
     border-radius: 5px;
 }
+
+.res_image {
+    display: block;
+    margin: auto;
+}
