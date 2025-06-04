@@ -33,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (!empty($ban_user_id) && !empty($ban_reason)) {
             $stmt = $conn->prepare("INSERT INTO 'Bans' ('reason', 'user_id', 'ban_start', 'ban_end') VALUES (?, ?, ?, ?)");
+            if (!$stmt) {
+                die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+            }
             $stmt->bind_param("siss", $ban_reason, $ban_user_id, $ban_start, $ban_end);
             if ($stmt->execute()) {
                 $message = "User $ban_user_id has been banned.";
