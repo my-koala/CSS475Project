@@ -7,7 +7,10 @@ if ($conn->connect_error) {
 }
 
 $message = "";
+$erroe = "";
+
 $uploadDir = "uploads/";
+
 if (!file_exists($uploadDir)) mkdir($uploadDir);
 
 if (isset($_POST["submit_post"])) {
@@ -37,8 +40,10 @@ if (isset($_POST["submit_post"])) {
                 $photo_id = $stmt->insert_id;
             }
             $stmt->close();
+
+            $message = "Image uploaded successfully!";
         } else {
-            $message = "Failed to upload image.";
+            $error = "Failed to upload image.";
         }
     }
 
@@ -48,7 +53,7 @@ if (isset($_POST["submit_post"])) {
     if ($stmt->execute()) {
         $message = "Post created successfully!";
     } else {
-        $message = "Error creating post.";
+        $error = "Error creating post.";
     }
     $stmt->close();
 }
@@ -73,12 +78,12 @@ if (isset($_POST["submit_post"])) {
             if ($stmt->execute()) {
                 $message = "Photo attached to post!";
             } else {
-                $message = "Error attaching photo: " . $stmt->error;
+                $error = "Error attaching photo: " . $stmt->error;
             }
 
             $stmt->close();
         } else {
-            $message = "This photo doesn't belong to the provided user ID.";
+            $error = "This photo doesn't belong to the provided user ID.";
             $stmt->close();
         }
     }
@@ -89,6 +94,7 @@ if (isset($_POST["submit_post"])) {
 
 <head>
     <title>Make a Post</title>
+    <link rel="stylesheet" href="making_post.css">
 </head>
 
 <body>
@@ -97,7 +103,9 @@ if (isset($_POST["submit_post"])) {
 
     <!-- Main body -->
     <h2>Create New Post</h2>
-    <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
+
+    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <?php if (!empty($message)) echo "<p style='color:green;'>$message</p>"; ?>
 
     <form method="post">
         <label>User ID:</label><br>
