@@ -173,13 +173,13 @@ CREATE TABLE IF NOT EXISTS CampaignPosts (
 -- Table Values
 
 INSERT INTO Users (user_id, username, pass_hash, birthdate, email, join_date, private_acc, display_name, profile_photo_id) VALUES
-(0, 'tim_huynh', 'fa39223abacabf18c7732bcee269d084895286162186ed574ec169e47c5cb3b9', '2004-02-28', 'timhuynh@outlook.com', '2025-04-20', 1, 'master_splinter', 0),
-(1, 'james', '0f7e5a8fb3f726be65110cb51bae58ba9f7227ec7ec0526a5b1087060784edb0', '1909-09-09', 'jbruse@uw.edu', '2025-05-01', 0, 'my_koala', 1),
-(2, 'mario', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '2002-07-18', 'houming@uw.edu', '2025-05-01', 1, 'mario', 2),
+(0, 'tim_huynh', 'fa39223abacabf18c7732bcee269d084895286162186ed574ec169e47c5cb3b9', '2004-08-23', 'timhuynh@outlook.com', '2025-04-20', 1, 'master_splinter', 0),
+(1, 'james', '0f7e5a8fb3f726be65110cb51bae58ba9f7227ec7ec0526a5b1087060784edb0', '1909-09-09', 'jbruse@uw.edu', '2025-05-01', 0, 'my_koala', 4),
+(2, 'mario', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '2002-07-18', 'houming@uw.edu', '2025-05-01', 1, 'mario', 1),
 (3, 'yousuf', '782afecf90a8dc95ad44ad31f099a3c5237e0afe3ca2ff009d97cae053a2437d', '2006-07-12', 'yalbass@uw.edu', '2025-05-01', 1, 'bassuni', 3),
-(4, 'anoop', '632f42619b422a30c850a2d098e7e8431c321cab28a364b0b1cb90f1cb765058', '2004-03-14', 'anoopp@uw.edu', '2025-05-01', 0, 'ap!', 3),
-(5, 'elon_musk', 'cebe3d9d614ba5c19f633566104315854a11353a333bf96f16b5afa0e90abdc4', '1971-06-28', 'elonm@gmail.com', '2025-05-10', 1, 'madatgascar', 4),
-(6, 'barack_obama', 'fa88d374b9cf5e059fad4a2fe406feae4c49cbf4803083ec521d3c75ee22557c', '1961-08-04', 'barack_obama@gmail.com', '2025-05-12', 0, 'myfellowamericans', 5);
+(4, 'anoop', '632f42619b422a30c850a2d098e7e8431c321cab28a364b0b1cb90f1cb765058', '2004-03-14', 'anoopp@uw.edu', '2025-05-01', 0, 'ap!', 2),
+(5, 'elon_musk', 'cebe3d9d614ba5c19f633566104315854a11353a333bf96f16b5afa0e90abdc4', '1971-06-28', 'elonm@gmail.com', '2025-05-10', 1, 'madatgascar', NULL),
+(6, 'barack_obama', 'fa88d374b9cf5e059fad4a2fe406feae4c49cbf4803083ec521d3c75ee22557c', '1961-08-04', 'barack_obama@gmail.com', '2025-05-12', 0, 'myfellowamericans', NULL);
 
 INSERT INTO UserIPs (user_id, ip) VALUES
 (0, '192.84.133.219'),
