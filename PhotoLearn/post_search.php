@@ -189,6 +189,8 @@ require_once 'header.inc.php';
                 if (!empty($sql_like_count_result)) {
                     echo "Like Count: " . htmlspecialchars($sql_like_count_result['like_count']) . "<br>";
                 }
+            } else {
+                echo "Like Count: 0<br>";
             }
             
             // Get likers
@@ -216,8 +218,8 @@ require_once 'header.inc.php';
             $sql_comments_results = $conn->query($sql_comments);
             echo "<h4>Comments</h4>";
             while (!empty($sql_comments_results) && $sql_comments_result = $sql_comments_results->fetch_assoc()) {
-                echo htmlspecialchars($sql_comments_result['display_name']) . " commented on " . htmlspecialchars($sql_comments_result['comment_timestamp']) . ":<br>";
-                echo htmlspecialchars($sql_comments_result['comment_text']) . "<br><br>";
+                echo "<h5>" . htmlspecialchars($sql_comments_result['display_name']) . " commented on " . htmlspecialchars($sql_comments_result['comment_timestamp']) . ":</h5>";
+                echo htmlspecialchars($sql_comments_result['comment_text']) . "<br>";
                 
                 $comment_id = $sql_comments_result['comment_id'];
                 
@@ -226,12 +228,15 @@ require_once 'header.inc.php';
                 $sql_comment_like_count .= "WHERE PostCommentLikes.comment_id = " . $comment_id;
                 $sql_comment_like_count .= "GROUP BY PostCommentLikes.comment_id";
                 
+                echo "<h5>";
                 $sql_comment_like_count_results = $conn->query($sql_comment_like_count);
                 if (!empty($sql_comment_like_count_results)) {
                     $sql_comment_like_count_result = $sql_comment_like_count_results->fetch_assoc();
                     if (!empty($sql_comment_like_count_result)) {
                         echo "Like Count: " . htmlspecialchars($sql_comment_like_count_result['like_count']) . "<br>";
                     }
+                } else {
+                    echo "Like Count: 0<br>";
                 }
                 
                 // Get comment likers
@@ -248,7 +253,7 @@ require_once 'header.inc.php';
                         echo " " . htmlspecialchars($sql_comment_likers_result['display_name']);
                     }
                 }
-                echo "<br>";
+                echo "</h5>";
             }
             
             $sql_tags_results = $conn->query($sql_photos);
