@@ -98,6 +98,10 @@ if (isset($_POST['delete_user'])) {
 </head>
 
 <body>
+    <!-- top header  -->
+    <?php require_once 'header.inc.php';?>
+
+    <!-- Main body -->
     <h2>User Management</h2>
     <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
 
