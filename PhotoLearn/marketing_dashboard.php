@@ -19,8 +19,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
     ");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $campaign = $result->fetch_assoc();
+    if ($stmt->fetch()) {
+    $campaign = [
+        'campaign_id' => $campaign_id,
+        'username' => $username,
+        'title' => $title,
+        'campaign_start' => $campaign_start,
+        'campaign_end' => $campaign_end
+    ];
+} else {
+    $campaign = null;
+}
     $stmt->close();
 
     // Get campaign posts if campaign exists
@@ -36,20 +45,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
 ?>
 
 <html>
+
 <head>
     <title>Campaign Page</title>
 </head>
+
 <body>
+    <!-- top header  -->
+    <?php require_once 'header.inc.php';?>
 
-<h2>Search Campaign by User ID</h2>
+    <!-- Main body -->
 
-<form method="post">
-    <label>Enter User ID:</label><br>
-    <input type="number" name="search_user_id" value="<?= htmlspecialchars($user_id) ?>" required>
-    <input type="submit" value="Search">
-</form>
+    <h2>Search Campaign by User ID</h2>
 
-<?php if ($campaign): ?>
+    <form method="post">
+        <label>Enter User ID:</label><br>
+        <input type="number" name="search_user_id" value="<?= htmlspecialchars($user_id) ?>" required>
+        <input type="submit" value="Search">
+    </form>
+
+    <?php if ($campaign): ?>
     <h3>Campaign Details</h3>
     <ul>
         <li><strong>Campaign ID:</strong> <?= htmlspecialchars($campaign['campaign_id']) ?></li>
@@ -61,25 +76,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
 
     <h3>Campaign Posts</h3>
     <?php if (count($campaignPosts) > 0): ?>
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Post ID</th>
-            </tr>
-            <?php foreach ($campaignPosts as $post): ?>
-                <tr>
-                    <td><?= htmlspecialchars($post['post_id']) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Post ID</th>
+        </tr>
+        <?php foreach ($campaignPosts as $post): ?>
+        <tr>
+            <td><?= htmlspecialchars($post['post_id']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
     <?php else: ?>
-        <p>No posts found for this campaign.</p>
+    <p>No posts found for this campaign.</p>
     <?php endif; ?>
 
-<?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
+    <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
     <p>No campaign found for user ID <?= htmlspecialchars($user_id) ?>.</p>
-<?php endif; ?>
+    <?php endif; ?>
 
 </body>
+
 </html>
 
 <?php $conn->close(); ?>
