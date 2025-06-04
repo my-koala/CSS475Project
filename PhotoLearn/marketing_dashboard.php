@@ -3,6 +3,10 @@ require_once 'config.inc.php';
 $conn = new mysqli($servername, $username, $password, $database, $port);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
+
+$message = "";
+$error = "";
+
 // $user_id = '';
 $campaign = null;
 $campaignPosts = [];
@@ -62,14 +66,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_campaign'])) {
         $stmt->bind_param("isss", $user_id, $title, $campaign_start, $campaign_end);
 
         if ($stmt->execute()) {
-            echo "<p style='color: green;'>Campaign created successfully!</p>";
+            $message = "Campaign created successfully!";
+            $error = "";
         } else {
-            echo "<p style='color: red;'>Failed to create campaign: " . htmlspecialchars($stmt->error) . "</p>";
+            $error =  "Failed to create campaign: " . htmlspecialchars($stmt->error);
         }
 
         $stmt->close();
     } else {
-        echo "<p style='color: red;'>All fields are required to create a campaign.</p>";
+        $error = "All fields are required to create a campaign.";
     }
 }
 ?>
@@ -78,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_campaign'])) {
 
 <head>
     <title>Campaign Page</title>
+    <link rel="stylesheet" href="marketing_dashboard.css">
 </head>
 
 <body>
@@ -87,6 +93,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_campaign'])) {
     <!-- Main body -->
 
     <h2>Search Campaign by User ID</h2>
+
+    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <?php if (!empty($message)) echo "<p style='color:green;'>$message</p>"; ?>
 
     <form method="post">
         <label>Enter User ID:</label><br>
