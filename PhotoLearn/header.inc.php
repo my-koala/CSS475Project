@@ -29,7 +29,7 @@
     <a href="admin_dashboard.php">Admin Dashboard</a>
     <a href="admin_database.php">Admin Database</a>
 
-    <!-- <a href="marketing_dashboard.php">Marketing Dashboard</a> -->
+    <a href="marketing_dashboard.php">Marketing Dashboard</a>
 
     
 </div>
