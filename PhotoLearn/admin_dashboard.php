@@ -21,6 +21,47 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$message = "";
+
+// Handle ban form
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['ban_user'])) {
+        $ban_user_id = $_POST['ban_user_id'] ?? '';
+        $ban_reason = $_POST['ban_reason'] ?? '';
+        $ban_start = date("Y-m-d");
+        $ban_end = date("Y-m-d", strtotime("+1 year"));
+
+        if (!empty($ban_user_id) && !empty($ban_reason)) {
+            $stmt = $conn->prepare("INSERT INTO Bans (reason, user_id, ban_start, ban_end) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("siss", $ban_reason, $ban_user_id, $ban_start, $ban_end);
+            if ($stmt->execute()) {
+                $message = "User $ban_user_id has been banned.";
+            } else {
+                $message = "Failed to ban user.";
+            }
+            $stmt->close();
+        }
+    }
+
+    // Handle unban form
+    if (isset($_POST['unban_user'])) {
+        $unban_user_id = $_POST['unban_user_id'] ?? '';
+
+        if (!empty($unban_user_id)) {
+            $stmt = $conn->prepare("DELETE FROM Bans WHERE user_id = ?");
+            $stmt->bind_param("i", $unban_user_id);
+            if ($stmt->execute()) {
+                $message = "User $unban_user_id has been unbanned.";
+            } else {
+                $message = "Failed to unban user.";
+            }
+            $stmt->close();
+        }
+    }
+}
+
+
+
 // Get total user count
 $total_users = 0;
 $user_result = $conn->query("SELECT COUNT(*) as count FROM Users");
@@ -69,6 +110,25 @@ $result = $conn->query($sql);
         </tr>
         <?php endwhile; ?>
     </table>
+
+
+    <!-- Ban Form -->
+    <h3>Ban a User</h3>
+    <form method="POST">
+        <label>User ID:</label>
+        <input type="text" name="ban_user_id" required>
+        <label>Reason:</label>
+        <textarea name="ban_reason" required></textarea>
+        <input type="submit" name="ban_user" value="Ban User">
+    </form>
+
+    <!-- Unban Form -->
+    <h3>Unban a User</h3>
+    <form method="POST">
+        <label>User ID:</label>
+        <input type="text" name="unban_user_id" required>
+        <input type="submit" name="unban_user" value="Unban User">
+    </form>
 
 </body>
 
