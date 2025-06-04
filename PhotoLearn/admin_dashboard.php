@@ -74,6 +74,12 @@ $sql = "SELECT u.username, s.plan, s.date_start, s.date_end
         FROM Users u
         LEFT JOIN Subscriptions s ON u.user_id = s.user_id";
 $result = $conn->query($sql);
+
+$banlist = $conn->query("
+    SELECT b.ban_id, b.user_id, u.username, b.reason, b.ban_start, b.ban_end
+    FROM Bans b
+    JOIN Users u ON b.user_id = u.user_id
+");
 ?>
 
 <html>
@@ -93,25 +99,6 @@ $result = $conn->query($sql);
     <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
     <p>Total Users: <?php echo $total_users; ?></p>
 
-    <h3>User Subscriptions</h3>
-    <table>
-        <tr>
-            <th>Username</th>
-            <th>Plan</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-        </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
-        <tr>
-            <td><?php echo htmlspecialchars($row['username']); ?></td>
-            <td><?php echo htmlspecialchars($row['plan'] ?? 'None'); ?></td>
-            <td><?php echo htmlspecialchars($row['date_start'] ?? ''); ?></td>
-            <td><?php echo htmlspecialchars($row['date_end'] ?? ''); ?></td>
-        </tr>
-        <?php endwhile; ?>
-    </table>
-
-
     <!-- Ban Form -->
     <h3>Ban a User</h3>
     <form method="POST">
@@ -129,6 +116,48 @@ $result = $conn->query($sql);
         <input type="text" name="unban_user_id" required>
         <input type="submit" name="unban_user" value="Unban User">
     </form>
+
+    <!-- Ban List -->
+    <h3>Banned Users</h3>
+    <table>
+        <tr>
+            <th>Ban ID</th>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Reason</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+        <?php while ($row = $banlist->fetch_assoc()): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['ban_id']) ?></td>
+            <td><?= htmlspecialchars($row['user_id']) ?></td>
+            <td><?= htmlspecialchars($row['username']) ?></td>
+            <td><?= htmlspecialchars($row['reason']) ?></td>
+            <td><?= htmlspecialchars($row['ban_start']) ?></td>
+            <td><?= htmlspecialchars($row['ban_end']) ?></td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
+
+
+    <h3>User Subscriptions</h3>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Plan</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        <?php while ($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($row['username']); ?></td>
+            <td><?php echo htmlspecialchars($row['plan'] ?? 'None'); ?></td>
+            <td><?php echo htmlspecialchars($row['date_start'] ?? ''); ?></td>
+            <td><?php echo htmlspecialchars($row['date_end'] ?? ''); ?></td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
 
 </body>
 
