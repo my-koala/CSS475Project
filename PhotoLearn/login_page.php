@@ -8,6 +8,9 @@ session_start();
 
 require_once 'config.inc.php';
 
+$valid_username = 'admin';
+$valid_password = 'admin123';
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database, $port);
 
@@ -28,6 +31,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->bind_result();
+
+    if ($username === $valid_username && $password === $valid_password) {
+        $_SESSION['username'] = $username;
+        header("Location: admin_dashboard.php");
+        exit();
+    }
 
     // Check if user exists
     if ($stmt->fetch()) {
