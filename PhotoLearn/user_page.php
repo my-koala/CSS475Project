@@ -92,8 +92,50 @@ if (isset($_POST['delete_user'])) {
 }
 
 $user_list = $conn->query("SELECT user_id, username, display_name, join_date FROM Users");
+
+// Ban form handling
+if (isset($_POST['ban_submit'])) {
+    $your_id = intval($_POST['your_user_id']);
+    $target_id = intval($_POST['target_user_id']);
+    $reason = trim($_POST['reason']);
+    $ban_start = date("Y-m-d H:i:s");
+    $ban_end = date("Y-m-d H:i:s", strtotime("+1 year"));
+
+    if ($your_id !== $target_id && !empty($reason)) {
+        $stmt = $conn->prepare("INSERT INTO Bans (reason, user_id, ban_start, ban_end) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("siss", $reason, $target_id, $ban_start, $ban_end);
+        if ($stmt->execute()) {
+            $message = "User $target_id has been banned.";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $message = "You cannot ban yourself or leave reason empty.";
+    }
+}
+
+// Unban form handling
+if (isset($_POST['unban_submit'])) {
+    $your_id = intval($_POST['your_user_id_unban']);
+    $target_id = intval($_POST['target_user_id_unban']);
+
+    if ($your_id !== $target_id) {
+        $stmt = $conn->prepare("DELETE FROM Bans WHERE user_id = ?");
+        $stmt->bind_param("i", $target_id);
+        if ($stmt->execute()) {
+            $message = "User $target_id has been unbanned.";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $message = "You cannot unban yourself.";
+    }
+}
 ?>
-<!DOCTYPE html>
+
+
 <html>
 
 <head>
@@ -161,7 +203,6 @@ $user_list = $conn->query("SELECT user_id, username, display_name, join_date FRO
             <th>User ID</th>
             <th>Username</th>
             <th>Display Name</th>
-            <th>Email</th>
             <th>Date Created</th>
         </tr>
         <?php
@@ -181,14 +222,41 @@ $user_list = $conn->query("SELECT user_id, username, display_name, join_date FRO
             $status = "<span style='color: gray;'>Veteran</span>";
         }
     ?>
-    <tr>
-        <td><?= htmlspecialchars($row['user_id']) ?></td>
-        <td><?= htmlspecialchars($row['username']) ?></td>
-        <td><?= htmlspecialchars($row['display_name']) ?></td>
-        <td><?= $status ?></td>
-    </tr>
-    <?php endwhile; ?>
+        <tr>
+            <td><?= htmlspecialchars($row['user_id']) ?></td>
+            <td><?= htmlspecialchars($row['username']) ?></td>
+            <td><?= htmlspecialchars($row['display_name']) ?></td>
+            <td><?= $status ?></td>
+        </tr>
+        <?php endwhile; ?>
     </table>
+
+    <?php if (!empty($message)) echo "<p><strong>$message</strong></p>"; ?>
+
+    <h3>Ban a User</h3>
+    <form method="post">
+        <label>Your User ID:</label><br>
+        <input type="number" name="your_user_id" required><br><br>
+
+        <label>User ID to Ban:</label><br>
+        <input type="number" name="target_user_id" required><br><br>
+
+        <label>Reason:</label><br>
+        <textarea name="reason" rows="3" cols="40" required></textarea><br><br>
+
+        <input type="submit" name="ban_submit" value="Ban User">
+    </form>
+
+    <h3>Unban a User</h3>
+    <form method="post">
+        <label>Your User ID:</label><br>
+        <input type="number" name="your_user_id_unban" required><br><br>
+
+        <label>User ID to Unban:</label><br>
+        <input type="number" name="target_user_id_unban" required><br><br>
+
+        <input type="submit" name="unban_submit" value="Unban User">
+    </form>
 
 </body>
 
