@@ -38,15 +38,19 @@ $searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTagsString = $_POST['tags'] ?? "";
+    // Clean tags as trimmed alphanumeric lowercase
     $searchTags = explode(",", $searchTagsString);
     $searchTags = array_map(function($searchTag) {
-        // Clean trimmed tags to alphanumeric lowercase
-        return "\"" . preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag))) . "\"";
+        $searchTag = preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag)));
+        if (!empty($searchTag)) {
+            return "\"" . $searchTag . "\"";
+        }
+        return "";
     }, $searchTags);
-    
-    echo $searchTags . " ||||| \n";
+    $searchTags = array_filter(function($searchTag) {
+        return !empty($searchTag);
+    }, $searchTags);
     $searchTagsString = implode(",", $searchTags);
-    echo $searchTagsString;
     
     $sql = "SELECT * FROM Posts";
     $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
