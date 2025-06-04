@@ -15,6 +15,7 @@
     <!-- Basic page for user to see -->
     <a href="index.php">Home</a>
     <a href="post.php">Post</a>
+    <a href="post_search.php">Post Search</a>
     <a href="making_post.php">Making Post</a>
     <a href="login_page.php">Login</a>
     <a href="subscription_page.php">Subscription</a>
