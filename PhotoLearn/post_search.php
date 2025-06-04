@@ -38,21 +38,25 @@ $searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTagsString = $_POST['tags'] ?? "";
-    echo $searchTagsString;
     $searchTags = explode(",", $searchTagsString);
     $searchTags = array_map(function($searchTag) {
         // Clean trimmed tags to alphanumeric lowercase
         return "\"" . preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag))) . "\"";
     }, $searchTags);
+    
+    echo $searchTags . " ||||| \n";
     $searchTagsString = implode(",", $searchTags);
+    echo $searchTagsString;
     
     $sql = "SELECT * FROM Posts";
     $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
     $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
     if (!empty($searchTagsString)) {
+        echo "not empty!";
         $sql .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
         $sql .= " WHERE PostTags.tag_name in (" . $searchTagsString . ")";
     }
+    $sql .= " GROUP BY Posts.post_id";
     
     $sql_result = $conn->query($sql);
     
