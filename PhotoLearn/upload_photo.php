@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
     <?php require_once 'header.inc.php';?>
 
     <!-- Main body -->
-    <h2 style="text-align:center;">Upload Photo to </h2>
+    <h2 style="text-align:center;">Upload Photo</h2>
 
     <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
 
