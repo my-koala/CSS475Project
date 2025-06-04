@@ -73,6 +73,7 @@ if (isset($_POST['update_user'])) {
     } else {
         $message = "No fields to update.";
     }
+
 }
 
 // Delete user
@@ -89,6 +90,8 @@ if (isset($_POST['delete_user'])) {
     }
     $stmt->close();
 }
+
+$user_list = $conn->query("SELECT user_id, username, display_name, join_date FROM Users");
 ?>
 <!DOCTYPE html>
 <html>
@@ -151,6 +154,42 @@ if (isset($_POST['delete_user'])) {
         <input type="text" name="delete_username" required>
         <input type="submit" name="delete_user" value="Delete User">
     </form>
+
+    <h3>Registered Users</h3>
+    <table>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Display Name</th>
+            <th>Email</th>
+            <th>Date Created</th>
+        </tr>
+        <?php
+    $today = new DateTime();
+    while ($row = $user_list->fetch_assoc()):
+        $joined = new DateTime($row['date_created']);
+        $diffDays = $today->diff($joined)->days;
+
+        // Determine status
+        if ($diffDays <= 7) {
+            $status = "<span style='color: silver;'>Silver</span>";
+        } elseif ($diffDays <= 30) {
+            $status = "<span style='color: gold;'>Gold</span>";
+        } elseif ($diffDays <= 365) {
+            $status = "<span style='color: darkorange;'>God</span>";
+        } else {
+            $status = "<span style='color: gray;'>Veteran</span>";
+        }
+    ?>
+    <tr>
+        <td><?= htmlspecialchars($row['user_id']) ?></td>
+        <td><?= htmlspecialchars($row['username']) ?></td>
+        <td><?= htmlspecialchars($row['display_name']) ?></td>
+        <td><?= htmlspecialchars($row['email']) ?></td>
+        <td><?= $status ?></td>
+    </tr>
+    <?php endwhile; ?>
+    </table>
 
 </body>
 
