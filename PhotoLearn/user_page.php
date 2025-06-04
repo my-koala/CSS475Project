@@ -185,7 +185,6 @@ $user_list = $conn->query("SELECT user_id, username, display_name, join_date FRO
         <td><?= htmlspecialchars($row['user_id']) ?></td>
         <td><?= htmlspecialchars($row['username']) ?></td>
         <td><?= htmlspecialchars($row['display_name']) ?></td>
-        <td><?= htmlspecialchars($row['email']) ?></td>
         <td><?= $status ?></td>
     </tr>
     <?php endwhile; ?>
