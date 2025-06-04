@@ -152,7 +152,7 @@ $banlist = $conn->query("
     <h3>Unban a User</h3>
     <form method="POST">
         <label>User ID:</label>
-        <input type="number" name="unban_user_id" required><br>
+        <input type="number" name="unban_user_id" required>
         
         <input type="submit" name="unban_user" value="Unban User">
     </form>
