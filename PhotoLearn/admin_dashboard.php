@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ban_end = date("Y-m-d", strtotime("+1 year"));
 
         if (!empty($ban_user_id) && !empty($ban_reason)) {
-            $stmt = $conn->prepare("INSERT INTO 'Bans' ('reason', 'user_id', 'ban_start', 'ban_end') VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Bans (reason, user_id, ban_start, ban_end) VALUES (?, ?, ?, ?)");
             if (!$stmt) {
                 die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
             }
