@@ -40,8 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
             $imgInfo = getimagesize($filePath);
             $resX = $imgInfo[0];
             $resY = $imgInfo[1];
+            
+            // TODO: i need to check if this part of SQL call is wortking
+            $stmt = $conn->prepare("SELECT user_id FROM Users WHERE username = ?");
+            $stmt->bind_param("s", $$_POST['user_id']);
+            $stmt->execute();
+            $stmt->bind_result($user_id);
 
-            $user_id = $_POST['user_id'];
             $camera_model = $_POST['camera_model'] ?? '';
             $image_description = $_POST['image_description'] ?? '';
             $aperture = $_POST['aperture'] ?? '';
