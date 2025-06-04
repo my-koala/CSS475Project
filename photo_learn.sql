@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Subscriptions (
   plan VARCHAR(16) NOT NULL CHECK (plan IN ('premium', 'marketing', 'admin')),
   date_start DATETIME,
   date_end DATETIME,
-  CONSTRAINT CHECK (date_start <= date_end),
+  CHECK (date_start <= date_end),
   PRIMARY KEY (subscription_id)
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Bans (
   user_id INT,
   ban_start DATETIME,
   ban_end DATETIME,
-  CONSTRAINT CHECK (ban_start <= ban_end),
+  CHECK (ban_start <= ban_end),
   PRIMARY KEY (ban_id)
 );
 
