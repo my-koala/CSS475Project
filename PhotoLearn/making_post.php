@@ -57,17 +57,30 @@ if (isset($_POST["submit_post"])) {
     if (isset($_POST["attach_photo"])) {
         $post_id = intval($_POST['post_id']);
         $photo_id = intval($_POST['photo_id']);
+        $user_id = intval($_POST['user_id_attach']);
 
-        $stmt = $conn->prepare("INSERT INTO PostPhotos (post_id, photo_id) VALUES (?, ?)");
-        $stmt->bind_param("ii", $post_id, $photo_id);
+        // Verify ownership
+        $stmt = $conn->prepare("SELECT photo_id FROM Photos WHERE photo_id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $photo_id, $user_id);
+        $stmt->execute();
+        $stmt->store_result();
 
-        if ($stmt->execute()) {
-            $message = "Photo attached to post!";
+        if ($stmt->num_rows === 1) {
+            $stmt->close();
+            $stmt = $conn->prepare("INSERT INTO PostPhotos (post_id, photo_id) VALUES (?, ?)");
+            $stmt->bind_param("ii", $post_id, $photo_id);
+
+            if ($stmt->execute()) {
+                $message = "Photo attached to post!";
+            } else {
+                $message = "Error attaching photo: " . $stmt->error;
+            }
+
+            $stmt->close();
         } else {
-            $message = "Error: " . $stmt->error;
+            $message = "This photo doesn't belong to the provided user ID.";
+            $stmt->close();
         }
-
-        $stmt->close();
     }
 
 ?>
@@ -106,7 +119,10 @@ if (isset($_POST["submit_post"])) {
         <label for="photo_id">Enter Photo ID:</label><br>
         <input type="number" name="photo_id" id="photo_id" required><br><br>
 
-        <input type="submit" value="Attach Photo" name="attach_photo">
+        <label for="user_id_attach">Enter User ID (owner of photo):</label><br>
+        <input type="number" name="user_id_attach" id="user_id_attach" required><br><br>
+
+        <input type="submit" name="attach_photo" value="Attach Photo">
     </form>
 </body>
 
