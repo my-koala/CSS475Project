@@ -100,7 +100,8 @@ $banlist = $conn->query("
 
     <h2>Admin Dashboard</h2>
     <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
-    <p>Total Users: <?php echo $total_users; ?></p>
+    
+    <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
 
     <!-- Ban Form -->
     <h3>Ban a User</h3>
@@ -143,6 +144,7 @@ $banlist = $conn->query("
         <?php endwhile; ?>
     </table>
 
+    <p>Total Users: <?php echo $total_users; ?></p>
 
     <h3>User Subscriptions</h3>
     <table>
