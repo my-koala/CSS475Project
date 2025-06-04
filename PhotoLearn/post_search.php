@@ -149,7 +149,7 @@ require_once 'header.inc.php';
             $sql_photos_results = $conn->query($sql_photos);
             while (!empty($sql_photos_results) && $sql_photos_result = $sql_photos_results->fetch_assoc()) {
                 echo "Image path: " . $sql_photos_result['image_path'] . "\n";
-                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\">";
+                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\" width=\"256\" class=\"res_image\">";
             }
             ?>
         </div>
