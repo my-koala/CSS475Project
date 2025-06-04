@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 
 $message = "";
 
-$uploadDir = "./images/";
+$uploadDir = "images/";
 
 $maxSize = 2 * 1024 * 1024; // 2MB
 
@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["photo"])) {
             $stmt = $conn->prepare("INSERT INTO Photos 
                 (user_id, resolution_x, resolution_y, camera_model, image_format, image_description, aperture, shutter_speed, iso, focal_length, geolocation, image_path)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisssssiiss", $user_id, $resX, $resY, $camera_model, $imageFormat, $image_description, $aperture, $shutter_speed, $iso, $focal_length, $geolocation, $filePath);
+            $stmt->bind_param("iiisssssisss", $user_id, $resX, $resY, $camera_model, $imageFormat, $image_description, $aperture, $shutter_speed, $iso, $focal_length, $geolocation, $filePath);
 
             if ($stmt->execute()) {
                 $message = "Upload and metadata saved successfully!";
