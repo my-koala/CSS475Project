@@ -32,14 +32,20 @@ class Post {
     public $post_like_count = 0;
     
 }
+// Post info to display in order:
+// Post user id + name
+// Post timestamp
+// Post photos
+// Post text
 
+// Then all the comments
+// comments
 // Placeholder for actual search logic
 $searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "SELECT DISTINCT Posts.post_id, Posts.post_text, Posts.time_stamp FROM Posts";
-    $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
-    $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
+    $sql = "SELECT DISTINCT Posts.post_id";
+    $sql .= " FROM Posts";
     $sql .= " WHERE 0 = 0";
     
     // Tag search
@@ -76,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     echo "SQL query: " . $sql;
-    // Search query
+    // Search query for matching posts
     $sql_result = $conn->query($sql);
     
     $searchResultMessage = "Search ResultsTags included: " . $searchTagsString . "\n";
@@ -97,15 +103,14 @@ require_once 'header.inc.php';
     <div>
         <h2>Search Posts</h2>
         <form method="post" action="post_search.php">
+            <h3>Search Filters</h3>
             <label>Tags</label>
             <input type="text" name="search_tags" placeholder="Enter tags separated by commas">
-            
+            <br>
             <label>Start Time:</label>
             <input type="datetime-local" name="search_time_start">
-            
             <label>End Time:</label>
             <input type="datetime-local" name="search_time_end">
-            
             <input type="submit" value="Search">
         </form>
         
@@ -120,9 +125,32 @@ require_once 'header.inc.php';
         <?php while (!empty($sql_result) && ($row = $sql_result->fetch_assoc())): ?>
         <div class="results">
             <?php
-            echo htmlspecialchars($row['post_id']) . "\n";
-            echo htmlspecialchars($row['user_id']) . "\n";
-            echo htmlspecialchars($row['post_text']);
+            echo "Post ID: " . htmlspecialchars($row['post_id']) . "\n";
+            
+            $post_id = $row['post_id'];
+            
+            // Get user info
+            $sql_user = "SELECT * FROM Posts";
+            $sql_user .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
+            $sql_user .= " WHERE " . $post_id . " = Posts.post_id";
+            $sql_user .= " LIMIT 1";
+            
+            $sql_user_result = $conn->query($sql_user)->fetch_assoc();
+            if (!empty($sql_user_result)) {
+                echo "Author: " . htmlspecialchars($sql_user_result['display_name']) . "\n";
+                echo "Posted: " . htmlspecialchars($sql_user_result['time_stamp']) . "\n";
+            }
+            
+            // Get photos
+            $sql_photos = "SELECT * FROM Posts";
+            $sql_photos .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
+            $sql_photos .= " INNER JOIN Photos ON Photos.photo_id = PostPhotos.photo_id";
+            
+            $sql_photos_results = $conn->query($sql_photos);
+            while (!empty($sql_photos_results) && $sql_photos_result = $sql_photos_results->fetch_assoc()) {
+                echo "Image path: " . $sql_photos_result['image_path'] . "\n";
+                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\">";
+            }
             ?>
         </div>
         <?php endwhile; ?>
