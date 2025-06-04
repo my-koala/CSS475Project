@@ -141,7 +141,7 @@ $banlist = $conn->query("
     <h3>Ban a User</h3>
     <form method="POST">
         <label>User ID:</label>
-        <input type="number" name="ban_user_id" required>
+        <input type="number" name="ban_user_id" required><br>
         
         <label>Reason:</label>
         <textarea name="ban_reason" required></textarea>
@@ -152,7 +152,7 @@ $banlist = $conn->query("
     <h3>Unban a User</h3>
     <form method="POST">
         <label>User ID:</label>
-        <input type="number" name="unban_user_id" required>
+        <input type="number" name="unban_user_id" required><br>
         
         <input type="submit" name="unban_user" value="Unban User">
     </form>
@@ -161,16 +161,16 @@ $banlist = $conn->query("
     <h3>Update User Ban</h3>
     <form method="POST">
         <label>Ban ID:</label>
-        <input type="number" name="update_ban_id" required>
+        <input type="number" name="update_ban_id" required><br>
         
         <label>Reason:</label>
-        <textarea name="update_ban_reason" required></textarea>
+        <textarea name="update_ban_reason" required></textarea><br>
         
         <label>Start Date:</label>
         <input type="date" name="update_ban_start_date">
         
         <label>End Date:</label>
-        <input type="date" name="update_ban_end_date">
+        <input type="date" name="update_ban_end_date"><br>
         
         <input type="submit" name="update_ban_user" value="Update Ban">
     </form>
