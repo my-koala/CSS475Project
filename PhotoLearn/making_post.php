@@ -10,7 +10,7 @@ $message = "";
 $uploadDir = "uploads/";
 if (!file_exists($uploadDir)) mkdir($uploadDir);
 
-if (isset($_POST["POST"])) {
+if (isset($_POST["Submit Post"])) {
     $user_id = intval($_POST['user_id']);
     $post_text = trim($_POST['post_text']);
     $image_description = trim($_POST['image_description']);
@@ -54,7 +54,7 @@ if (isset($_POST["POST"])) {
 }
 
 // Handle form submission
-    if (isset($_POST["update"])) {
+    if (isset($_POST["Attach Photo"])) {
         $post_id = intval($_POST['post_id']);
         $photo_id = intval($_POST['photo_id']);
 
