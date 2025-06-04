@@ -68,6 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $stmt->close();
     }
+
+    $posts = $conn->query("SELECT post_id FROM Posts ORDER BY post_id DESC");
+    $photos = $conn->query("SELECT photo_id FROM Photos ORDER BY photo_id DESC");
 }
 ?>
 
