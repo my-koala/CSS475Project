@@ -103,7 +103,7 @@ $banlist = $conn->query("
     <h3>Ban a User</h3>
     <form method="POST">
         <label>User ID:</label>
-        <input type="text" name="ban_user_id" required>
+        <input type="number" name="ban_user_id" required>
         <label>Reason:</label>
         <textarea name="ban_reason" required></textarea>
         <input type="submit" name="ban_user" value="Ban User">
@@ -113,7 +113,7 @@ $banlist = $conn->query("
     <h3>Unban a User</h3>
     <form method="POST">
         <label>User ID:</label>
-        <input type="text" name="unban_user_id" required>
+        <input type="number" name="unban_user_id" required>
         <input type="submit" name="unban_user" value="Unban User">
     </form>
 
