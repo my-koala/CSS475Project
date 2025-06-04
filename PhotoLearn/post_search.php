@@ -34,27 +34,32 @@ class Post {
 }
 
 // Placeholder for actual search logic
-$searchResult = "";
+$searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $searchTagsString = $_POST['tags'] ?? "";
     $searchTags = explode(",", $searchTagsString);
-    
     $searchTags = array_map(function($searchTag) {
         // Clean trimmed tags to alphanumeric lowercase
         return preg_replace("/[^a-zA-Z0-9]/", "", trim(strtolower($searchTag)));
     }, $searchTags);
+    $searchTagsString = implode(",", searchTags);
     
     $sql = "SELECT * FROM Posts";
     $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
     $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
+    if (!empty($searchTagsString)) {
+        $sql .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
+        $sql .= " WHERE PostTags.tag in (" . $searchTagsString . ")";
+    }
+    
     $sql .= ";";
     
     $sql_result = $conn->query($sql);
     
-    $searchResult = "Tags included: ";
+    $searchResultMessage = "Tags included: ";
     foreach ($searchTags as $searchTag) {
-        $searchResults .= $searchTag . ", ";
+        $searchResultMessage .= $searchTag . ", ";
     }
 }
 
@@ -77,6 +82,14 @@ require_once 'header.inc.php';
             <input type="submit" value="Search">
         </form>
         
+        <?php if (!empty($searchResultMessage)): ?>
+        <div class="results">
+            <?php
+            echo htmlspecialchars($searchResultMessage);
+            ?>
+        </div>
+        
+        <?php endif; ?>
         <?php while (!empty($sql_result) && ($row = $sql_result->fetch_assoc())): ?>
         <div class="results">
             <?php
