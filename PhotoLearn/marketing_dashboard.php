@@ -19,6 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
     ");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
+    $stmt->bind_result($campaign_id, $username, $title, $campaign_start, $campaign_end);
+
     if ($stmt->fetch()) {
     $campaign = [
         'campaign_id' => $campaign_id,
