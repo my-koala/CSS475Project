@@ -366,9 +366,9 @@ INSERT INTO CampaignPosts (campaign_id, post_id) VALUES
 
 -- Table Checks
 
-ALTER TABLE Subscriptions ADD CHECK (date_start <= date_end);
+ALTER TABLE Subscriptions ADD CONSTRAINT sub_date CHECK (date_start <= date_end);
 
-ALTER TABLE Bans ADD CHECK (ban_start <= ban_end);
+ALTER TABLE Bans ADD CONSTRAINT ban_date CHECK (ban_start <= ban_end);
 
 -- Table Foreign Keys
 
