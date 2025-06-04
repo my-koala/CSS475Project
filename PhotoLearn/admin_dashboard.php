@@ -31,7 +31,7 @@ if ($row = $user_result->fetch_assoc()) {
 // Get user list with subscription info
 $sql = "SELECT u.username, s.plan, s.date_start, s.date_end 
         FROM Users u
-        LEFT JOIN att.Subscriptions s ON u.user_id = s.user_id";
+        LEFT JOIN Subscriptions s ON u.user_id = s.user_id";
 $result = $conn->query($sql);
 ?>
 
