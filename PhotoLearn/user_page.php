@@ -24,7 +24,7 @@ if (isset($_POST['create_user'])) {
     $display_name = trim($_POST['display_name']);
     $joined_date = date("Y-m-d");
 
-    $stmt = $conn->prepare("INSERT INTO Users (username, password_hash, birthdate, email, display_name, join_date) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO Users (username, pass_hash, birthdate, email, display_name, join_date) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $username, $password, $birthdate, $email, $display_name, $joined_date);
     if ($stmt->execute()) {
         $message = "User created with ID: " . $stmt->insert_id;
