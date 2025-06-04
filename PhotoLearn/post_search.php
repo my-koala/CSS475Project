@@ -67,12 +67,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $searchTimeStart = $_POST["search_time_start"] ?? "";
     if (!empty($searchTimeStart)) {
-        $sql .= " AND Posts.time_stamp > \'" . $searchTimeStart . "\'";
+        $sql .= " AND Posts.time_stamp > \"" . $searchTimeStart . "\"";
     }
     
     $searchTimeEnd = $_POST["search_time_end"] ?? "";
     if (!empty($searchTimeEnd)) {
-        $sql .= " AND Posts.time_stamp < \'" . $searchTimeEnd . "\'";
+        $sql .= " AND Posts.time_stamp < \"" . $searchTimeEnd . "\"";
     }
     
     echo "SQL query: " . $sql;
@@ -101,10 +101,10 @@ require_once 'header.inc.php';
             <input type="text" name="search_tags" placeholder="Enter tags separated by commas">
             
             <label>Start Time:</label>
-            <input type="time" name="search_time_start">
+            <input type="datetime-local" name="search_time_start">
             
             <label>End Time:</label>
-            <input type="time" name="search_time_end">
+            <input type="datetime-local" name="search_time_end">
             
             <input type="submit" value="Search">
         </form>
