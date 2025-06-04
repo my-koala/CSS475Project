@@ -50,7 +50,7 @@ if (isset($_POST['update_user'])) {
     $types = "";
 
     if (!empty($username)) { $fields[] = "username = ?"; $params[] = $username; $types .= "s"; }
-    if (!empty($password)) { $fields[] = "password_hash = ?"; $params[] = $password; $types .= "s"; }
+    if (!empty($password)) { $fields[] = "pass_hash = ?"; $params[] = $password; $types .= "s"; }
     if (!empty($birthdate)) { $fields[] = "birthdate = ?"; $params[] = $birthdate; $types .= "s"; }
     if (!empty($email)) { $fields[] = "email = ?"; $params[] = $email; $types .= "s"; }
     if (!empty($display_name)) { $fields[] = "display_name = ?"; $params[] = $display_name; $types .= "s"; }
