@@ -7,3 +7,11 @@ body {
 h2 {
     color: #333;
 }
+
+.error p {
+    color: red;
+}
+
+.message p {
+    color: green;
+}

@@ -39,15 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($insert->execute()) {
                 $message = "Subscription purchased successfully for '$username'.";
             } else {
-                $message = "Error while creating subscription.";
+                $error = "Error while creating subscription.";
             }
 
             $insert->close();
         } else {
-            $message = "Username not found.";
+            $error = "Username not found.";
         }
     } else {
-        $message = "Please enter a username.";
+        $error = "Please enter a username.";
     }
 }
 
@@ -67,7 +67,9 @@ require_once 'header.inc.php';
 ?>
     <h2>Buy Subscription</h2>
 
-    <?php if (!empty($message)) echo "<p style='color:green;'>$message</p>"; ?>
+    <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
+
+    <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>
 
     <form method="POST" action="subscription_page.php">
         <label for="username">Username:</label><br>
