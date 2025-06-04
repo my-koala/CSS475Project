@@ -183,9 +183,12 @@ require_once 'header.inc.php';
             $sql_like_count .= " WHERE PostLikes.post_id = " . $post_id;
             $sql_like_count .= " GROUP BY PostLikes.post_id";
             
-            $sql_like_count_result = $conn->query($sql_like_count)->fetch_assoc();
-            if (!empty($sql_like_count_result)) {
-                echo "Like Count: " . htmlspecialchars($sql_like_count_result['like_count']) . "<br>";
+            $sql_like_count_results = $conn->query($sql_like_count);
+            if (!empty($sql_like_count_results)) {
+                $sql_like_count_result = $sql_like_count_results->fetch_assoc();
+                if (!empty($sql_like_count_result)) {
+                    echo "Like Count: " . htmlspecialchars($sql_like_count_result['like_count']) . "<br>";
+                }
             }
             
             // Get likers
@@ -223,9 +226,12 @@ require_once 'header.inc.php';
                 $sql_comment_like_count .= "WHERE PostCommentLikes.comment_id = " . $comment_id;
                 $sql_comment_like_count .= "GROUP BY PostCommentLikes.comment_id";
                 
-                $sql_comment_like_count_result = $conn->query($sql_comment_like_count)->fetch_assoc();
-                if (!empty($sql_comment_like_count_result)) {
-                    echo "Like Count: " . htmlspecialchars($sql_comment_like_count_result['like_count']) . "<br>";
+                $sql_comment_like_count_results = $conn->query($sql_comment_like_count);
+                if (!empty(sql_comment_like_count_result)) {
+                    $sql_comment_like_count_result = $sql_comment_like_count_results->fetch_assoc();
+                    if (!empty($sql_comment_like_count_result)) {
+                        echo "Like Count: " . htmlspecialchars($sql_comment_like_count_result['like_count']) . "<br>";
+                    }
                 }
                 
                 // Get comment likers
