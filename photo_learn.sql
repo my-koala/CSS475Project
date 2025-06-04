@@ -227,18 +227,27 @@ INSERT INTO Bans (ban_id, user_id, reason, ban_start, ban_end) VALUES
 (3, 4, 'illegal', '2025-05-20 20:05:03', '2025-06-20 00:00:00'),
 (4, 1, 'stalking', '2025-06-01 00:17:48', '2035-06-01 00:00:00');
 
--- TODO: user ids and image_path
 INSERT INTO Photos (photo_id, user_id, resolution_x, resolution_y, camera_model, camera_manufacturer, image_format, image_description, image_path, aperture, shutter_speed, iso, focal_length, geolocation) VALUES
-(0, 0, 6000, 4000, 'G7 X', 'Canon', 'JPEG', 'selfie of tim', 'image/path', 'f/2.0', '1/250', 100, '22mm', 'Portland, United States'),
-(1, 2, 6000, 4000, 'D3500', 'Nikon', 'png', 'roses closeup', 'image/path', 'f/5.6', '1/200', 100, '300mm', 'Queenstown, New Zealand'),
-(2, 4, 6000, 4000, 'iPhone 15 Pro', 'Apple', 'HEIC', 'cherry blossoms', 'image/path', 'f/4.0', '1/100', 100, '85mm', 'Tokyo, Japan'),
-(3, 3, 6000, 4000, 'X-T4', 'Fujifilm', 'JPEG', 'goose closeup', 'image/path', 'f/4.0', '1/400', 100, '85mm', 'Vancouver, Canada'),
-(4, 1, 4000, 6000, 'a6700', 'Sony', 'png', 'cat portrait', 'image/path', 'f/1.8', '1/320', 640, '85mm', 'Mill Creek, United States'),
-(5, 6, 5900, 2190, 'EOS R10', 'Canon', 'png', 'aurora borealis', 'image/path', 'f/2.0', '10', 100, '22mm', 'Bothell, United States');
+(0, 0, 6000, 4000, 'G7 X', 'Canon', 'JPEG', 'selfie of tim', 'images/0.jpg', 'f/2.0', '1/250', 100, '22mm', 'Portland, United States'),
+(1, 2, 6000, 4000, 'D3500', 'Nikon', 'png', 'roses closeup', 'images/1.jpg', 'f/5.6', '1/200', 100, '300mm', 'Queenstown, New Zealand'),
+(2, 4, 6000, 4000, 'iPhone 15 Pro', 'Apple', 'HEIC', 'cherry blossoms', 'images/2.jpg', 'f/4.0', '1/100', 100, '85mm', 'Tokyo, Japan'),
+(3, 3, 6000, 4000, 'X-T4', 'Fujifilm', 'JPEG', 'goose closeup', 'images/3.jpg', 'f/4.0', '1/400', 100, '85mm', 'Vancouver, Canada'),
+(4, 1, 4000, 6000, 'a6700', 'Sony', 'png', 'cat portrait', 'images/4.jpg', 'f/1.8', '1/320', 640, '85mm', 'Mill Creek, United States'),
+(5, 6, 5900, 2190, 'EOS R10', 'Canon', 'png', 'aurora borealis', 'images/5.jpg', 'f/2.0', '10', 100, '22mm', 'Bothell, United States');
 
--- TODO: add image paths and resolutions
 INSERT INTO Thumbnails (photo_id, resolution_x, resolution_y, image_path, image_format) VALUES
-(0, 3000, 2000, 'image/path', 'image_format');
+(0, 640, 480, 'images/0_640x480.jpg', 'image_format'),
+(0, 1024, 768, 'images/0_1024x720.jpg', 'image_format'),
+(1, 640, 480, 'images/1_640x480.jpg', 'image_format'),
+(1, 1024, 768, 'images/1_1024x720.jpg', 'image_format'),
+(2, 640, 480, 'images/2_640x480.jpg', 'image_format'),
+(2, 1024, 768, 'images/2_1024x720.jpg', 'image_format'),
+(3, 640, 480, 'images/3_640x480.jpg', 'image_format'),
+(3, 1024, 768, 'images/3_1024x720.jpg', 'image_format'),
+(4, 640, 480, 'images/4_640x480.jpg', 'image_format'),
+(4, 1024, 768, 'images/4_1024x720.jpg', 'image_format'),
+(5, 640, 480, 'images/5_640x480.jpg', 'image_format'),
+(5, 1024, 768, 'images/5_1024x720.jpg', 'image_format');
 
 INSERT INTO CameraModels (camera_model, camera_manufacturer, device) VALUES
 ('G7 X', 'Canon', 'point_shoot'),
