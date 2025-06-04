@@ -37,7 +37,13 @@ class Post {
 $searchResultMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $searchTagsString = $_POST['tags'] ?? "";
+    $sql = "SELECT DISTINCT Posts.post_id, Posts.post_text, Posts.time_stamp FROM Posts";
+    $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
+    $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
+    $sql .= " WHERE 0 = 0";
+    
+    // Tag search
+    $searchTagsString = $_POST["search_tags"] ?? "";
     // Clean tags as trimmed alphanumeric lowercase
     $searchTags = explode(",", $searchTagsString);
     $searchTagsString = "";
@@ -52,19 +58,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $searchTagsString = implode(",", $searchTags);
     }
     
-    $sql = "SELECT * FROM Posts";
-    $sql .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
-    $sql .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
     if (!empty($searchTagsString)) {
-        echo "not empty!";
-        $sql .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
-        $sql .= " WHERE PostTags.tag_name in (" . $searchTagsString . ")";
+        $sql .= " AND EXISTS (";
+        $sql .= " SELECT PostTags.post_id FROM PostTags";
+        $sql .= " WHERE PostTags.post_id = Posts.post_id";
+        $sql .= " AND PostTags.tag_name in (" . $searchTagsString . "))";
     }
-    $sql .= " GROUP BY Posts.post_id";
     
+    $searchTimeStart = $_POST["search_time_start"] ?? "";
+    if (!empty($searchTimeStart)) {
+        $sql .= " AND Posts.time_stamp > \'" . $searchTimeStart . "\'";
+    }
+    
+    $searchTimeEnd = $_POST["search_time_end"] ?? "";
+    if (!empty($searchTimeEnd)) {
+        $sql .= " AND Posts.time_stamp < \'" . $searchTimeEnd . "\'";
+    }
+    
+    echo "SQL query: " . $sql;
+    // Search query
     $sql_result = $conn->query($sql);
     
-    $searchResultMessage = "Tags included: " . $searchTagsString;
+    $searchResultMessage = "Search ResultsTags included: " . $searchTagsString . "\n";
 }
 
 ?>
@@ -82,7 +97,15 @@ require_once 'header.inc.php';
     <div>
         <h2>Search Posts</h2>
         <form method="post" action="post_search.php">
-            <input type="text" name="tags" placeholder="Enter tags separated by commas">
+            <label>Tags</label>
+            <input type="text" name="search_tags" placeholder="Enter tags separated by commas">
+            
+            <label>Start Time:</label>
+            <input type="time" name="search_time_start">
+            
+            <label>End Time:</label>
+            <input type="time" name="search_time_end">
+            
             <input type="submit" value="Search">
         </form>
         
