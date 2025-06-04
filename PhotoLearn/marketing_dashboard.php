@@ -34,13 +34,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search_user_id'])) {
 
     // Get campaign posts if campaign exists
     if ($campaign) {
-        $campaign_id = $campaign['campaign_id'];
-        $stmt2 = $conn->prepare("SELECT post_id FROM CampaignPosts WHERE campaign_id = ?");
-        $stmt2->bind_param("i", $campaign_id);
-        $stmt2->execute();
-        $campaignPosts = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt2->close();
+    $campaign_id = $campaign['campaign_id'];
+    $stmt2 = $conn->prepare("SELECT post_id FROM CampaignPosts WHERE campaign_id = ?");
+    $stmt2->bind_param("i", $campaign_id);
+    $stmt2->execute();
+    $stmt2->bind_result($post_id);
+
+    $campaignPosts = [];
+    while ($stmt2->fetch()) {
+        $campaignPosts[] = ['post_id' => $post_id];
     }
+
+    $stmt2->close();
+}
 }
 ?>
 
