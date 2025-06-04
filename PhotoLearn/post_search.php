@@ -125,32 +125,62 @@ require_once 'header.inc.php';
         <?php while (!empty($sql_result) && ($row = $sql_result->fetch_assoc())): ?>
         <div class="results">
             <?php
-            echo "Post ID: " . htmlspecialchars($row['post_id']) . "\n";
+            echo "Post ID: " . htmlspecialchars($row['post_id']) . "<br>";
             
             $post_id = $row['post_id'];
             
             // Get user info
             $sql_user = "SELECT * FROM Posts";
             $sql_user .= " INNER JOIN Users ON Posts.user_id = Users.user_id";
-            $sql_user .= " WHERE " . $post_id . " = Posts.post_id";
+            $sql_user .= " WHERE Posts.post_id = " . $post_id;
             $sql_user .= " LIMIT 1";
             
             $sql_user_result = $conn->query($sql_user)->fetch_assoc();
             if (!empty($sql_user_result)) {
-                echo "Author: " . htmlspecialchars($sql_user_result['display_name']) . "\n";
-                echo "Posted: " . htmlspecialchars($sql_user_result['time_stamp']) . "\n";
+                echo "Author: " . htmlspecialchars($sql_user_result['display_name']) . "<br>";
+                echo "Posted: " . htmlspecialchars($sql_user_result['time_stamp']) . "<br>";
             }
             
             // Get photos
             $sql_photos = "SELECT * FROM Posts";
             $sql_photos .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
             $sql_photos .= " INNER JOIN Photos ON Photos.photo_id = PostPhotos.photo_id";
+            $sql_photos .= " INNER JOIN CameraModels ON (Photos.camera_model, Photos.camera_manufacturer) = (CameraModels.camera_model, CameraModels.camera_manufacturer)";
+            $sql_photos .= " WHERE Posts.post_id = " . $post_id;
             
             $sql_photos_results = $conn->query($sql_photos);
             while (!empty($sql_photos_results) && $sql_photos_result = $sql_photos_results->fetch_assoc()) {
-                echo "Image path: " . $sql_photos_result['image_path'] . "\n";
-                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\" width=\"256\" class=\"res_image\">";
+                echo "Image path: " . $sql_photos_result['image_path'] . "<br>";
+                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\" width=\"256\" class=\"res_image\"><br>";
+                echo "<h3>Photo Information</h3>";
+                echo "Resolution: " . $sql_photos_result['resolution_x'] . "x" . $sql_photos_result['resolution_y'] . "<br>";
+                echo "Camera Model: " . $sql_photos_result['camera_manufacturer'] . " " . $sql_photos_result['camera_model'] . "(" . $sql_photos_result['device'] . ")<br>";
+                echo "Image Format: " . $sql_photos_result['image_format'] . "<br>";
+                echo "Image Description: " . $sql_photos_result['image_description'] . "<br>";
+                echo "Camera Aperture: " . $sql_photos_result['aperture'] . "<br>";
+                echo "Camera Shutter Speed: " . $sql_photos_result['shutter_speed'] . "<br>";
+                echo "Camera ISO: " . $sql_photos_result['iso'] . "<br>";
+                echo "Camera Focal Length: " . $sql_photos_result['focal_length'] . "<br>";
+                echo "Geolocation: " . $sql_photos_result['geolocation'] . "<br>";
             }
+            
+            // Get post tags
+            $sql_tags = "SELECT * FROM Posts";
+            $sql_tags .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
+            $sql_tags .= " WHERE Posts.post_id = " . $post_id;
+            
+            echo "Tags:";
+            $sql_tags_results = $conn->query($sql_tags);
+            while (!empty($sql_tags_results) && $sql_tags_result = $sql_tags_results->fetch_assoc()) {
+                echo " " . $sql_tags_result['tag_name'];
+            }
+            echo "<br>";
+            
+            
+            
+            $sql_tags_results = $conn->query($sql_photos);
+            
+            
             ?>
         </div>
         <?php endwhile; ?>
