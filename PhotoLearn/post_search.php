@@ -179,7 +179,7 @@ require_once 'header.inc.php';
             echo "<h4>Post Likes</h4>";
             
             // Get like count
-            $sql_like_count = "SELECT COUNT(PostLikes.user_id) AS like_count FROM PostLikes";
+            $sql_like_count = "SELECT COUNT(*) AS like_count FROM PostLikes";
             $sql_like_count .= " WHERE PostLikes.post_id = " . $post_id;
             $sql_like_count .= " GROUP BY PostLikes.post_id";
             
@@ -194,9 +194,13 @@ require_once 'header.inc.php';
             $sql_likers .= " WHERE PostLikes.post_id = " . $post_id;
             
             $sql_likers_results = $conn->query($sql_likers);
-            echo "Liked by";
-            while (!empty($sql_likers_results) && $sql_likers_result = $sql_likers_results->fetch_assoc()) {
-                echo " " . htmlspecialchars($sql_likers_result['display_name']);
+            if (empty($sql_likers_results)) {
+                echo "Liked by nobody...";
+            } else {
+                echo "Liked by";
+                while (!empty($sql_likers_results) && $sql_likers_result = $sql_likers_results->fetch_assoc()) {
+                    echo " " . htmlspecialchars($sql_likers_result['display_name']);
+                }
             }
             echo "<br>";
             
@@ -209,9 +213,36 @@ require_once 'header.inc.php';
             $sql_comments_results = $conn->query($sql_comments);
             echo "<h4>Comments</h4>";
             while (!empty($sql_comments_results) && $sql_comments_result = $sql_comments_results->fetch_assoc()) {
-                echo htmlspecialchars($sql_comments_result['display_name']) . " commented " . htmlspecialchars($sql_comments_result['comment_timestamp']) . "<br>";
-                echo htmlspecialchars($sql_comments_result['comment_text']) . "<br>";
+                echo htmlspecialchars($sql_comments_result['display_name']) . " commented on " . htmlspecialchars($sql_comments_result['comment_timestamp']) . ":<br>";
+                echo htmlspecialchars($sql_comments_result['comment_text']) . "<br><br>";
                 
+                $comment_id = $sql_comments_result['comment_id'];
+                
+                // Get comment like count
+                $sql_comment_like_count = "SELECT COUNT(*) AS like_count FROM PostCommentLikes";
+                $sql_comment_like_count .= "WHERE PostCommentLikes.comment_id = " . $comment_id;
+                $sql_comment_like_count .= "GROUP BY PostCommentLikes.comment_id";
+                
+                $sql_comment_like_count_result = $conn->query($sql_comment_like_count)->fetch_assoc();
+                if (!empty($sql_comment_like_count_result)) {
+                    echo "Like Count: " . htmlspecialchars($sql_comment_like_count_result['like_count']) . "<br>";
+                }
+                
+                // Get comment likers
+                $sql_comment_likers = "SELECT * FROM PostCommentLikes";
+                $sql_comment_likers .= " INNER JOIN Users ON Users.user_id = PostCommentLikes.user_id";
+                $sql_comment_likers .= " WHERE PostCommentLikes.comment_id = " . $comment_id;
+                
+                $sql_comment_likers_results = $conn->query($sql_comment_likers);
+                if (empty($sql_comment_likers_results)) {
+                    echo "Liked by nobody...";
+                } else {
+                    echo "Liked by";
+                    while (!empty($sql_comment_likers_results) && $sql_comment_likers_result = $sql_comment_likers_results->fetch_assoc()) {
+                        echo " " . htmlspecialchars($sql_comment_likers_result['display_name']);
+                    }
+                }
+                echo "<br>";
             }
             
             $sql_tags_results = $conn->query($sql_photos);
