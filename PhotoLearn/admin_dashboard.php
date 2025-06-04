@@ -118,7 +118,7 @@ $banlist = $conn->query("
     JOIN Users u ON b.user_id = u.user_id
 ");
 
-$user_list = $conn->query("SELECT user_id, username, display_name, email, date_created FROM Users");
+$user_list = $conn->query("SELECT user_id, username, display_name, email, join_date FROM Users");
 
 ?>
 
@@ -236,7 +236,7 @@ $user_list = $conn->query("SELECT user_id, username, display_name, email, date_c
             <td><?= htmlspecialchars($row['username']) ?></td>
             <td><?= htmlspecialchars($row['display_name']) ?></td>
             <td><?= htmlspecialchars($row['email']) ?></td>
-            <td><?= htmlspecialchars($row['date_created']) ?></td>
+            <td><?= htmlspecialchars($row['join_date']) ?></td>
         </tr>
         <?php endwhile; ?>
     </table>
