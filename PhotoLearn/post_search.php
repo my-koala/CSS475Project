@@ -141,29 +141,6 @@ require_once 'header.inc.php';
                 echo "Posted: " . htmlspecialchars($sql_user_result['time_stamp']) . "<br>";
             }
             
-            // Get photos
-            $sql_photos = "SELECT * FROM Posts";
-            $sql_photos .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
-            $sql_photos .= " INNER JOIN Photos ON Photos.photo_id = PostPhotos.photo_id";
-            $sql_photos .= " INNER JOIN CameraModels ON (Photos.camera_model, Photos.camera_manufacturer) = (CameraModels.camera_model, CameraModels.camera_manufacturer)";
-            $sql_photos .= " WHERE Posts.post_id = " . $post_id;
-            
-            $sql_photos_results = $conn->query($sql_photos);
-            while (!empty($sql_photos_results) && $sql_photos_result = $sql_photos_results->fetch_assoc()) {
-                echo "Image path: " . $sql_photos_result['image_path'] . "<br>";
-                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\" width=\"256\" class=\"res_image\"><br>";
-                echo "<h3>Photo Information</h3>";
-                echo "Resolution: " . $sql_photos_result['resolution_x'] . "x" . $sql_photos_result['resolution_y'] . "<br>";
-                echo "Camera Model: " . $sql_photos_result['camera_manufacturer'] . " " . $sql_photos_result['camera_model'] . "(" . $sql_photos_result['device'] . ")<br>";
-                echo "Image Format: " . $sql_photos_result['image_format'] . "<br>";
-                echo "Image Description: " . $sql_photos_result['image_description'] . "<br>";
-                echo "Camera Aperture: " . $sql_photos_result['aperture'] . "<br>";
-                echo "Camera Shutter Speed: " . $sql_photos_result['shutter_speed'] . "<br>";
-                echo "Camera ISO: " . $sql_photos_result['iso'] . "<br>";
-                echo "Camera Focal Length: " . $sql_photos_result['focal_length'] . "<br>";
-                echo "Geolocation: " . $sql_photos_result['geolocation'] . "<br>";
-            }
-            
             // Get post tags
             $sql_tags = "SELECT * FROM Posts";
             $sql_tags .= " INNER JOIN PostTags ON PostTags.post_id = Posts.post_id";
@@ -176,10 +153,66 @@ require_once 'header.inc.php';
             }
             echo "<br>";
             
+            // Get photos
+            $sql_photos = "SELECT * FROM Posts";
+            $sql_photos .= " INNER JOIN PostPhotos ON PostPhotos.post_id = Posts.post_id";
+            $sql_photos .= " INNER JOIN Photos ON Photos.photo_id = PostPhotos.photo_id";
+            $sql_photos .= " INNER JOIN CameraModels ON (Photos.camera_model, Photos.camera_manufacturer) = (CameraModels.camera_model, CameraModels.camera_manufacturer)";
+            $sql_photos .= " WHERE Posts.post_id = " . $post_id;
             
+            $sql_photos_results = $conn->query($sql_photos);
+            while (!empty($sql_photos_results) && $sql_photos_result = $sql_photos_results->fetch_assoc()) {
+                echo "Image path: " . $sql_photos_result['image_path'] . "<br>";
+                echo "<img src=\"" . $sql_photos_result['image_path'] . "\" alt=\"image test\" width=\"512\" class=\"res_image\"><br>";
+                echo "<h3>Photo Information</h3>";
+                echo "Resolution: " . $sql_photos_result['resolution_x'] . "x" . $sql_photos_result['resolution_y'] . "<br>";
+                echo "Camera Model: " . $sql_photos_result['camera_manufacturer'] . " " . $sql_photos_result['camera_model'] . " (" . $sql_photos_result['device'] . ")<br>";
+                echo "Image Format: " . $sql_photos_result['image_format'] . "<br>";
+                echo "Image Description: " . $sql_photos_result['image_description'] . "<br>";
+                echo "Camera Aperture: " . $sql_photos_result['aperture'] . "<br>";
+                echo "Camera Shutter Speed: " . $sql_photos_result['shutter_speed'] . "<br>";
+                echo "Camera ISO: " . $sql_photos_result['iso'] . "<br>";
+                echo "Camera Focal Length: " . $sql_photos_result['focal_length'] . "<br>";
+                echo "Geolocation: " . $sql_photos_result['geolocation'] . "<br>";
+            }
+            
+            // Get like count
+            $sql_like_count = "SELECT COUNT(PostLikes.user_id) AS like_count FROM PostLikes";
+            $sql_like_count .= " WHERE PostLikes.post_id = " . $post_id;
+            $sql_like_count .= " GROUP BY PostLikes.post_id";
+            
+            $sql_like_count_result = $conn->query($sql_like_count)->fetch_assoc();
+            if (!empty($sql_like_count_result)) {
+                echo "Like Count: " . htmlspecialchars($sql_like_count_result['like_count']) . "<br>";
+            }
+            
+            // Get likers
+            $sql_likers = "SELECT * FROM PostLikes";
+            $sql_likers .= " INNER JOIN Users ON Users.user_id = PostLikes.user_id";
+            $sql_likers .= " WHERE PostLikes.post_id = " . $post_id;
+            
+            $sql_likers_results = $conn->query($sql_likers);
+            echo "Liked by";
+            while (!empty($sql_likers_results) && $sql_likers_result = $sql_likers_results->fetch_assoc()) {
+                echo " " . $sql_likers_result['display_name'];
+            }
+            echo "<br>";
+            
+            // Get comments
+            $sql_comments = "SELECT * FROM PostComments";
+            $sql_comments .= " INNER JOIN Users ON Users.user_id = PostComments.user_id";
+            $sql_comments .= " WHERE PostComments.post_id = " . $post_id;
+            $sql_comments .= " ORDER BY PostComments.comment_timestamp";
+            
+            $sql_comments_results = $conn->query($sql_comments);
+            echo "<h3>Comments</h3>";
+            while (!empty($sql_comments_results) && $sql_comments_result = $sql_comments_results->fetch_assoc()) {
+                echo $sql_comments_results['display_name'] . " commented " . $sql_comments_results['comment_timestamp'] . "<br>";
+                echo $sql_comments_results['comment_text'] . "<br>";
+                
+            }
             
             $sql_tags_results = $conn->query($sql_photos);
-            
             
             ?>
         </div>
